@@ -78,6 +78,10 @@ quiznova_web/
 
 ## Getting started
 
+> **Want to put it online?** [DEPLOY.md](DEPLOY.md) has the whole guide for
+> Vercel (a hosted MySQL, the environment variables and the Blob store for
+> the uploaded videos) and for a normal server.
+
 ### 1. Install
 
 ```bash
