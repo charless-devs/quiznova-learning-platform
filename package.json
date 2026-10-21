@@ -24,7 +24,7 @@
   "license": "ISC",
   "type": "commonjs",
   "engines": {
-    "node": "22.x"
+    "node": ">=22"
   },
   "dependencies": {
     "ejs": "^7.0.2",

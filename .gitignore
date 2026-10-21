@@ -6,3 +6,5 @@ npm-debug.log*
 # The videos the admin uploaded (they belong to the database, not to the code)
 public/uploads/videos/*
 !public/uploads/videos/.gitkeep
+
+.vercel
