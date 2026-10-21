@@ -107,8 +107,37 @@ or with the CLI:
 
 ```bash
 npx vercel --prod          # the first time it asks for the login
-npx vercel env add DB_PASSWORD production
 ```
+
+### The commands that were used for this project
+
+```bash
+# 1. the login of the CLI
+npx vercel login charleslambusonshi@gmail.com
+
+# 2. the connection to the project
+npx vercel link --yes --project quiznova-learning-platform
+
+# 3. the secret (encrypted - it can not be read again)
+npx vercel env add SESSION_SECRET production --sensitive \
+  --value "$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")" --yes
+
+# 4. the database
+npx vercel env add DB_HOST production --value "your-mysql-host" --yes
+npx vercel env add DB_PORT production --value 3306 --yes
+npx vercel env add DB_USER production --value "your-user" --yes
+npx vercel env add DB_PASSWORD production --sensitive --value "your-password" --yes
+npx vercel env add DB_NAME production --value "quiznova" --yes
+npx vercel env add DB_POOL_SIZE production --value 3 --yes
+
+# 5. the tables on the hosted database (once)
+npm run db:setup
+
+# 6. the deployment
+npx vercel --prod
+```
+
+The list of the variables: `npx vercel env ls`.
 
 ## 6. What works and what does not
 
