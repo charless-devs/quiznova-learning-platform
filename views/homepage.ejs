@@ -1,0 +1,450 @@
+<%- include('partials/head', { title: 'QuizNova - Level Up Your Knowledge', page: 'homepage' }) %>
+<body class="bg-darkBg text-slate-100 min-h-screen transition-colors duration-300 selection:bg-brand-500 selection:text-white flex flex-col justify-between">
+
+    <!-- Top Glow Accent Header -->
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-48 bg-brand-600/15 blur-[120px] pointer-events-none z-0"></div>
+
+    <div class="relative z-10 flex-1 flex flex-col">
+        <!-- Navigation Header -->
+        <header id="homeHeader" class="sticky top-0 z-40 backdrop-blur-md bg-darkBg/80 border-b border-borderBg/60 transition-all">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <!-- Logo -->
+                <a href="/" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/25 group-hover:scale-105 transition-transform duration-200">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-white">Quiz<span class="text-brand-400">Nova</span></span>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <nav data-section-nav class="relative hidden md:flex items-center gap-1 bg-cardBg/60 px-4 py-1.5 rounded-full border border-borderBg/80" aria-label="Main navigation">
+                    <span data-nav-indicator class="absolute rounded-full bg-brand-600/20 border border-brand-500/30 transition-all duration-300 ease-out pointer-events-none opacity-0"></span>
+                    <a href="#home" data-nav-link="home" class="relative z-10 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">Home</a>
+                    <a href="#quizzes" data-nav-link="quizzes" class="relative z-10 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">Quizzes</a>
+                    <a href="#subjects" data-nav-link="subjects" class="relative z-10 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">Subjects</a>
+                    <a href="#about" data-nav-link="about" class="relative z-10 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">About</a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-3">
+                    <button id="themeToggle" data-theme-toggle class="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-cardBg border border-borderBg/60 transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                        <i data-lucide="sun" class="w-5 h-5"></i>
+                    </button>
+                    <a href="/accsetup" class="hidden sm:inline-flex px-4 py-2.5 text-sm font-medium text-slate-300 hover:text-white transition-colors">Log In</a>
+                    <a href="/accsetup" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow-lg shadow-brand-600/30 hover:shadow-brand-500/40 transition-all duration-200 hover:-translate-y-0.5">
+                        Register
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mobile Nav Links -->
+            <div class="md:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3">
+                <nav data-section-nav class="relative flex items-center gap-1 overflow-x-auto" aria-label="Main navigation">
+                    <span data-nav-indicator class="absolute rounded-full bg-brand-600/20 border border-brand-500/30 transition-all duration-300 ease-out pointer-events-none opacity-0"></span>
+                    <a href="#home" data-nav-link="home" class="relative z-10 shrink-0 px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors">Home</a>
+                    <a href="#quizzes" data-nav-link="quizzes" class="relative z-10 shrink-0 px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors">Quizzes</a>
+                    <a href="#subjects" data-nav-link="subjects" class="relative z-10 shrink-0 px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors">Subjects</a>
+                    <a href="#about" data-nav-link="about" class="relative z-10 shrink-0 px-3.5 py-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors">About</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Body -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-20">
+
+            <!-- HERO SECTION -->
+            <section id="home" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Hero Left Column -->
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- Badge -->
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold tracking-wide">
+                        <i data-lucide="zap" class="w-3.5 h-3.5 fill-brand-400"></i>
+                        <span>Learn • Practice • Grow</span>
+                    </div>
+
+                    <!-- Heading -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
+                        Level Up Your Knowledge with <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-indigo-300 to-purple-400">QuizNova</span>
+                    </h1>
+
+                    <!-- Subtitle -->
+                    <p class="text-lg text-slate-400 max-w-2xl leading-relaxed">
+                        Take interactive quizzes, track real-time progress, and master key subjects. Your journey to a smarter future starts here.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <a href="#quizzes" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-white bg-brand-600 hover:bg-brand-500 shadow-xl shadow-brand-600/25 transition-all hover:-translate-y-0.5">
+                            <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                            <span>Start Learning</span>
+                        </a>
+                        <a href="#subjects" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-slate-200 bg-cardBg hover:bg-slate-800/80 border border-borderBg/80 transition-all">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            <span>Browse Quizzes</span>
+                        </a>
+                    </div>
+
+                    <!-- Key Feature Pills -->
+                    <div class="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 border-t border-borderBg/60">
+                        <div class="flex items-center gap-2.5 text-xs font-medium text-slate-300">
+                            <div class="p-1.5 rounded-lg bg-brand-500/10 text-brand-400">
+                                <i data-lucide="book-open" class="w-4 h-4"></i>
+                            </div>
+                            <span>Multiple Subjects</span>
+                        </div>
+                        <div class="flex items-center gap-2.5 text-xs font-medium text-slate-300">
+                            <div class="p-1.5 rounded-lg bg-brand-500/10 text-brand-400">
+                                <i data-lucide="timer" class="w-4 h-4"></i>
+                            </div>
+                            <span>Timed Quizzes</span>
+                        </div>
+                        <div class="flex items-center gap-2.5 text-xs font-medium text-slate-300">
+                            <div class="p-1.5 rounded-lg bg-brand-500/10 text-brand-400">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            </div>
+                            <span>Track Progress</span>
+                        </div>
+                        <div class="flex items-center gap-2.5 text-xs font-medium text-slate-300">
+                            <div class="p-1.5 rounded-lg bg-brand-500/10 text-brand-400">
+                                <i data-lucide="award" class="w-4 h-4"></i>
+                            </div>
+                            <span>Earn Badges</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Right Column (Clean Simplified Interactive Card Dashboard Preview) -->
+                <div class="lg:col-span-5 relative">
+                    <!-- Subtle Glow Backdrop -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-indigo-600 rounded-2xl blur-lg opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+
+                    <div class="relative bg-cardBg border border-borderBg rounded-2xl p-6 shadow-2xl space-y-6">
+                        <!-- Dashboard Mock Card Header -->
+                        <div class="flex items-center justify-between pb-4 border-b border-borderBg/60">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-slate-800 border border-borderBg flex items-center justify-center font-bold text-brand-400">
+                                    JD
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-semibold text-white">Alex Morgan</h4>
+                                    <p class="text-xs text-slate-400">Level 8 Knowledge Explorer</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
+                                Active Streak 🔥 5 Days
+                            </span>
+                        </div>
+
+                        <!-- Progress Bar Block -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-medium">
+                                <span class="text-slate-400">Weekly Quiz Completion</span>
+                                <span class="text-brand-400">85%</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-brand-500 to-indigo-500 h-full rounded-full w-[85%]"></div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Achievements Mini Grid -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-borderBg/60 flex items-center gap-3">
+                                <div class="p-2 bg-amber-500/10 rounded-lg text-amber-400">
+                                    <i data-lucide="trophy" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-white">12 Badges</div>
+                                    <div class="text-[11px] text-slate-400">Earned so far</div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-borderBg/60 flex items-center gap-3">
+                                <div class="p-2 bg-blue-500/10 rounded-lg text-blue-400">
+                                    <i data-lucide="target" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-white">94% Accuracy</div>
+                                    <div class="text-[11px] text-slate-400">Average score</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Daily Challenge Preview Banner -->
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-brand-900/40 to-indigo-900/40 border border-brand-500/30 flex items-center justify-between">
+                            <div class="space-y-0.5">
+                                <p class="text-xs font-semibold text-brand-300 uppercase tracking-wider">Daily Question</p>
+                                <p class="text-xs font-medium text-slate-200">What is the light-year a unit of?</p>
+                            </div>
+                            <button onclick="openQuizModal('Science', 'What is a light-year a unit of?', ['Time', 'Distance', 'Brightness', 'Speed'], 1)" class="px-3 py-1.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-lg transition-colors whitespace-nowrap">
+                                Answer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FEATURED QUIZZES SECTION -->
+            <section id="quizzes" class="space-y-6">
+                <!-- Section Header -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-brand-500/10 rounded-xl text-brand-400">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-white tracking-tight">Featured Quizzes</h2>
+                            <p class="text-xs text-slate-400 mt-0.5">Explore our most popular quizzes and test your skills</p>
+                        </div>
+                    </div>
+                    <a href="#subjects" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300 transition-colors">
+                        <span>View All Quizzes</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+                <!-- Quiz Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+                    <!-- Mathematics -->
+                    <div onclick="openQuizModal('Mathematics', 'Solve for x: 3x + 15 = 45', ['5', '10', '12', '15'], 1)" class="group cursor-pointer p-5 bg-cardBg hover:bg-slate-800/80 rounded-2xl border border-borderBg hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-brand-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="calculator" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">Exam Mode</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors">Mathematics</h3>
+                                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Test your problem-solving skills in algebra, geometry, and mental math routines.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-borderBg/60 text-xs text-slate-400 font-medium">
+                            <span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> 20 Questions</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 30 mins</span>
+                        </div>
+                    </div>
+
+                    <!-- Computer Science -->
+                    <div onclick="openQuizModal('Computer Science', 'Which data structure follows LIFO?', ['Queue', 'Stack', 'Array', 'Tree'], 1)" class="group cursor-pointer p-5 bg-cardBg hover:bg-slate-800/80 rounded-2xl border border-borderBg hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-brand-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center border border-cyan-500/20 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="code" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Practice Mode</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors">Computer Science</h3>
+                                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Sharpen your logic, algorithm design, and core programming language fundamentals.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-borderBg/60 text-xs text-slate-400 font-medium">
+                            <span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> 25 Questions</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 45 mins</span>
+                        </div>
+                    </div>
+
+                    <!-- English -->
+                    <div onclick="openQuizModal('English', 'Choose the synonym for \'Meticulous\':', ['Careless', 'Thorough', 'Hastily', 'Vague'], 1)" class="group cursor-pointer p-5 bg-cardBg hover:bg-slate-800/80 rounded-2xl border border-borderBg hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-brand-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center border border-pink-500/20 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="book-open-check" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">Exam Mode</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors">English</h3>
+                                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Improve reading comprehension, advanced grammar, and expansive vocabulary.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-borderBg/60 text-xs text-slate-400 font-medium">
+                            <span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> 15 Questions</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 20 mins</span>
+                        </div>
+                    </div>
+
+                    <!-- Science -->
+                    <div onclick="openQuizModal('Science', 'Which gas do plants absorb during photosynthesis?', ['Oxygen', 'Carbon Dioxide', 'Nitrogen', 'Hydrogen'], 1)" class="group cursor-pointer p-5 bg-cardBg hover:bg-slate-800/80 rounded-2xl border border-borderBg hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-brand-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="flask-conical" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Practice Mode</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors">Science</h3>
+                                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Explore wonders of biology, chemistry, physics, and earth sciences.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-borderBg/60 text-xs text-slate-400 font-medium">
+                            <span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> 20 Questions</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 30 mins</span>
+                        </div>
+                    </div>
+
+                    <!-- History -->
+                    <div onclick="openQuizModal('History', 'Which ancient monument was built in Egypt?', ['The Colosseum', 'The Great Pyramid', 'Machu Picchu', 'Taj Mahal'], 1)" class="group cursor-pointer p-5 bg-cardBg hover:bg-slate-800/80 rounded-2xl border border-borderBg hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-brand-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="landmark" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">Exam Mode</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors">History</h3>
+                                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Discover world history, ancient civilizations, and major milestones.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-borderBg/60 text-xs text-slate-400 font-medium">
+                            <span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> 15 Questions</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 25 mins</span>
+                        </div>
+                    </div>
+
+                    <!-- Filipino -->
+                    <div onclick="openQuizModal('Filipino', 'Ano ang pambansang ibon ng Pilipinas?', ['Maya', 'Agila ng Pilipinas', 'Kalaw', 'Pipit'], 1)" class="group cursor-pointer p-5 bg-cardBg hover:bg-slate-800/80 rounded-2xl border border-borderBg hover:border-brand-500/50 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-brand-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="w-12 h-12 rounded-xl bg-orange-500/10 text-orange-400 flex items-center justify-center border border-orange-500/20 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="feather" class="w-6 h-6"></i>
+                                </div>
+                                <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">Practice Mode</span>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white group-hover:text-brand-300 transition-colors">Filipino</h3>
+                                <p class="text-xs text-slate-400 mt-1 line-clamp-2">Enhance your national language skills, literature, and cultural literacy.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-borderBg/60 text-xs text-slate-400 font-medium">
+                            <span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> 15 Questions</span>
+                            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> 20 mins</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SUBJECTS QUICK SELECT SECTION -->
+            <section id="subjects" class="space-y-6">
+                <!-- Section Header -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-brand-500/10 rounded-xl text-brand-400">
+                            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-white tracking-tight">Explore Subjects</h2>
+                            <p class="text-xs text-slate-400 mt-0.5">Quickly select a subject to filter quizzes</p>
+                        </div>
+                    </div>
+                    <a href="#subjects" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300 transition-colors">
+                        <span>View All Subjects</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+
+                <!-- Subject Quick Chips -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                    <button class="flex items-center gap-3 p-3.5 bg-cardBg hover:bg-slate-800 rounded-xl border border-borderBg hover:border-brand-500/40 transition-all text-left group">
+                        <div class="p-2 rounded-lg bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="calculator" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-200 group-hover:text-white">Mathematics</span>
+                    </button>
+
+                    <button class="flex items-center gap-3 p-3.5 bg-cardBg hover:bg-slate-800 rounded-xl border border-borderBg hover:border-brand-500/40 transition-all text-left group">
+                        <div class="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="code" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-200 group-hover:text-white">Comp Sci</span>
+                    </button>
+
+                    <button class="flex items-center gap-3 p-3.5 bg-cardBg hover:bg-slate-800 rounded-xl border border-borderBg hover:border-brand-500/40 transition-all text-left group">
+                        <div class="p-2 rounded-lg bg-pink-500/10 text-pink-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="book-open-check" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-200 group-hover:text-white">English</span>
+                    </button>
+
+                    <button class="flex items-center gap-3 p-3.5 bg-cardBg hover:bg-slate-800 rounded-xl border border-borderBg hover:border-brand-500/40 transition-all text-left group">
+                        <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-200 group-hover:text-white">Science</span>
+                    </button>
+
+                    <button class="flex items-center gap-3 p-3.5 bg-cardBg hover:bg-slate-800 rounded-xl border border-borderBg hover:border-brand-500/40 transition-all text-left group">
+                        <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="landmark" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-200 group-hover:text-white">History</span>
+                    </button>
+
+                    <button class="flex items-center gap-3 p-3.5 bg-cardBg hover:bg-slate-800 rounded-xl border border-borderBg hover:border-brand-500/40 transition-all text-left group">
+                        <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400 group-hover:scale-110 transition-transform">
+                            <i data-lucide="feather" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-slate-200 group-hover:text-white">Filipino</span>
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer id="about" class="border-t border-borderBg/60 bg-darkBg/80 mt-12 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-lg bg-brand-600 flex items-center justify-center text-white">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <span>© 2026 QuizNova • All rights reserved.</span>
+                </div>
+                <div class="flex items-center gap-6 text-slate-400">
+                    <span class="italic text-slate-400">"Learn something new every day"</span>
+                    <a href="/#about" class="hover:text-white transition-colors">Privacy</a>
+                    <a href="/#about" class="hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- INTERACTIVE QUIZ MODAL (POPUP PREVIEW) -->
+    <div id="quizModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardBg border border-borderBg w-full max-w-lg rounded-2xl p-6 shadow-2xl relative space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <!-- Close Button -->
+            <button onclick="closeQuizModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="space-y-1">
+                <span id="modalSubjectTag" class="text-xs font-bold text-brand-400 uppercase tracking-wider">Subject</span>
+                <h3 id="modalQuestionTitle" class="text-lg font-bold text-white">Question Sample</h3>
+            </div>
+
+            <!-- Quiz Options Form -->
+            <div id="modalOptions" class="space-y-2.5">
+                <!-- Options inserted via JS -->
+            </div>
+
+            <!-- Result Feedback Box -->
+            <div id="quizFeedback" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+
+            <!-- Modal Actions -->
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button onclick="closeQuizModal()" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors">
+                    Close
+                </button>
+                <button id="submitAnswerBtn" onclick="checkAnswer()" class="px-5 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow-lg shadow-brand-600/30 transition-all">
+                    Submit Answer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'homepage' }) %>

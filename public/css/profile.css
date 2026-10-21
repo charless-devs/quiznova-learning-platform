@@ -1,0 +1,169 @@
+/* ==========================================================================
+   QuizNova - student progress page
+   ========================================================================== */
+
+:root {
+    --qn-chart-grid: rgba(148, 163, 184, 0.35);
+    --qn-card-shadow: 0 10px 30px -12px rgba(2, 6, 23, 0.55);
+}
+
+html.light {
+    --qn-chart-grid: rgba(100, 116, 139, 0.4);
+    --qn-card-shadow: 0 10px 30px -14px rgba(15, 23, 42, 0.18);
+}
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #262c42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+/* Cards --------------------------------------------------------------- */
+.qn-card {
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    box-shadow: var(--qn-card-shadow);
+}
+
+/* Radar chart --------------------------------------------------------- */
+.qn-radar-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.qn-radar-grid polygon {
+    fill: none;
+    stroke: var(--qn-chart-grid);
+    stroke-width: 1;
+    stroke-dasharray: 4 5;
+}
+
+.qn-radar-spokes line {
+    stroke: var(--qn-chart-grid);
+    stroke-width: 1;
+}
+
+.qn-radar-area {
+    fill: url('#qnRadarFill');
+    stroke: #7c3aed;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    opacity: 0;
+    transform-origin: center;
+    transform: scale(0.4);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.qn-radar-dot {
+    stroke: rgb(var(--qn-card));
+    stroke-width: 2.5;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.qn-radar-hub {
+    fill: var(--qn-chart-grid);
+}
+
+.qn-radar-wrap.is-ready .qn-radar-area {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.qn-radar-wrap.is-ready .qn-radar-dot {
+    opacity: 1;
+}
+
+/* The bubbles that sit around the chart. */
+.qn-radar-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.875rem;
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    box-shadow: var(--qn-card-shadow);
+    white-space: nowrap;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    z-index: 1;
+}
+
+.qn-radar-label:hover {
+    transform: translate(-50%, -50%) scale(1.06);
+    border-color: rgb(var(--qn-border));
+    box-shadow: 0 12px 28px -10px rgba(2, 6, 23, 0.6);
+}
+
+.qn-radar-label__icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.qn-radar-label__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.qn-radar-label__name {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.qn-radar-label__score {
+    font-size: 0.9375rem;
+    font-weight: 800;
+}
+
+@media (max-width: 640px) {
+    .qn-radar-label {
+        transform: translate(-50%, -50%) scale(0.78);
+    }
+
+    .qn-radar-label:hover {
+        transform: translate(-50%, -50%) scale(0.86);
+    }
+
+    .qn-radar-label__name {
+        display: none;
+    }
+}
+
+/* Trend chart --------------------------------------------------------- */
+.qn-trend-line {
+    fill: none;
+    stroke: #7c3aed;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.qn-trend-dot {
+    fill: rgb(var(--qn-card));
+    stroke: #7c3aed;
+    stroke-width: 2;
+}
+
+.qn-trend-base {
+    stroke: var(--qn-chart-grid);
+    stroke-width: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .qn-radar-area,
+    .qn-radar-dot {
+        transition: none;
+    }
+}

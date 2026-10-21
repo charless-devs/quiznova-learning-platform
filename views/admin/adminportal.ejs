@@ -1,0 +1,217 @@
+<%- include('../partials/head', { title: 'QuizNova - Admin Portal & Assessment Builder', page: 'adminportal' }) %>
+<body class="min-h-screen bg-navyBg text-slate-200 antialiased flex flex-col lg:flex-row overflow-x-hidden selection:bg-brandBlue selection:text-white">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- MOBILE HEADER -->
+    <header class="lg:hidden bg-cardBg border-b border-borderBg p-4 flex items-center justify-between sticky top-0 z-40">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brandBlue to-cyanAccent flex items-center justify-center font-bold text-white shadow-lg">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <span class="font-extrabold text-white text-base tracking-tight">Quiz<span class="text-brandBlue">Nova</span> <span class="text-xs px-2 py-0.5 rounded bg-brandBlue/20 text-brandBlue font-bold ml-1">ADMIN</span></span>
+        </div>
+        <button onclick="toggleMobileMenu()" class="p-2 text-slate-400 hover:text-white bg-inputBg border border-borderBg rounded-lg">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+    </header>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-cardBg border-r border-borderBg flex flex-col justify-between p-5 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto">
+        <div class="space-y-6">
+            <!-- Sidebar Header / Logo -->
+            <div class="hidden lg:flex items-center gap-3 px-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brandBlue to-cyanAccent flex items-center justify-center text-white shadow-lg shadow-brandBlue/30">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-lg font-extrabold tracking-tight text-white">Quiz<span class="text-brandBlue">Nova</span></span>
+                    <span class="block text-[10px] font-bold tracking-widest text-slate-400 uppercase">Admin Portal</span>
+                </div>
+            </div>
+
+            <!-- Main Menu Links - every button has its own page -->
+            <nav class="space-y-1">
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 px-3 pb-2 pt-1">Core Modules</div>
+
+                <% const navItem = 'nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all'; %>
+                <% const navItemActive = navItem + ' text-white bg-brandBlue font-semibold shadow-md shadow-brandBlue/20'; %>
+                <% const navItemIdle = navItem + ' text-slate-400 hover:text-white hover:bg-inputBg'; %>
+
+                <a href="/admin" class="qn-sidebar-link <%= tab === 'dashboard' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="/admin/builder" class="qn-sidebar-link <%= tab === 'builder' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <div class="flex items-center gap-3 flex-1">
+                        <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                        <span>Exam &amp; Quiz Builder</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-brandBlue/20 text-brandBlue font-bold rounded-full">New</span>
+                </a>
+
+                <a href="/admin/scores" class="qn-sidebar-link <%= tab === 'scores' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <div class="flex items-center gap-3 flex-1">
+                        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                        <span>Student Scores</span>
+                    </div>
+                    <% if (stats && stats.openMessages) { %>
+                        <span class="px-2 py-0.5 text-[10px] bg-amberWarning/20 text-amberWarning font-bold rounded-full"><%= stats.openMessages %> New</span>
+                    <% } %>
+                </a>
+
+                <a href="/admin/users" class="qn-sidebar-link <%= tab === 'users' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span>User Management</span>
+                </a>
+
+                <a href="/admin/courses" class="qn-sidebar-link <%= tab === 'courses' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span>Courses &amp; Videos</span>
+                </a>
+
+                <a href="/admin/messages" class="qn-sidebar-link <%= tab === 'messages' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span>Student Messages</span>
+                </a>
+
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 px-3 pb-2 pt-4">System Settings</div>
+
+                <a href="/admin/settings" class="qn-sidebar-link <%= tab === 'settings' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <i data-lucide="sliders" class="w-4 h-4"></i>
+                    <span>Platform Settings</span>
+                </a>
+
+                <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 px-3 pb-2 pt-4">Your Account</div>
+
+                <a href="/admin/account" class="qn-sidebar-link <%= tab === 'account' ? 'is-active ' + navItemActive : navItemIdle %>">
+                    <i data-lucide="user-cog" class="w-4 h-4"></i>
+                    <span>My Account</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Admin Profile Box Footer -->
+        <div class="pt-4 border-t border-borderBg space-y-3">
+            <a href="/" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-inputBg text-xs font-medium transition-all">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Back to the homepage</span>
+            </a>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" alt="Admin" class="w-9 h-9 rounded-xl object-cover ring-2 ring-brandBlue">
+                    <div class="overflow-hidden">
+                        <h4 class="text-xs font-bold text-white truncate"><%= user ? user.name : 'Super Admin' %></h4>
+                        <p class="text-[10px] text-slate-400 truncate">Super Admin</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button data-theme-toggle class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-inputBg transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                        <i data-lucide="sun" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="logout()" class="p-2 text-slate-400 hover:text-coralDanger rounded-lg hover:bg-inputBg transition-colors" title="Logout">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <!-- MAIN APP CONTENT AREA -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+        <!-- TOP BAR HEADER -->
+        <header class="bg-cardBg border-b border-borderBg px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-30">
+
+            <!-- The section that is open -->
+            <div class="flex items-center gap-3 min-w-0">
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-slate-400 hover:text-white bg-inputBg border border-borderBg rounded-xl flex-shrink-0" title="Open the menu">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+
+                <div class="min-w-0">
+                    <h2 class="text-sm font-extrabold text-white truncate"><%= section.title %></h2>
+                    <p class="text-[11px] text-slate-400 truncate hidden sm:block"><%= section.hint %></p>
+                </div>
+            </div>
+
+            <!-- Search of the current page -->
+            <% if (section.search) { %>
+                <div class="relative w-full order-3 md:order-none md:w-auto md:flex-1 md:max-w-md md:min-w-[11rem]">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" id="adminSearch" oninput="adminSearch(this.value)" placeholder="<%= section.search %>"
+                        class="w-full pl-10 pr-4 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brandBlue transition-colors">
+                    <span id="adminSearchCount" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-brandBlue bg-brandBlue/10 border border-brandBlue/30 rounded-full px-2 py-0.5"></span>
+                </div>
+            <% } %>
+
+            <!-- Top Actions -->
+            <div class="flex items-center gap-2 sm:gap-3 ml-auto flex-shrink-0">
+
+                <%# The builder has its own buttons - no second "create" button here. %>
+                <% if (tab !== 'builder') { %>
+                    <a href="/admin/builder" class="px-3.5 py-2 bg-brandBlue hover:bg-brandHover text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Create Assessment</span>
+                    </a>
+                <% } %>
+
+                <a href="/admin/messages" class="p-2 text-slate-400 hover:text-white bg-inputBg border border-borderBg rounded-xl relative" title="The student messages">
+                    <i data-lucide="bell" class="w-4.5 h-4.5"></i>
+                    <% if (stats && stats.openMessages) { %>
+                        <span class="absolute -top-1 -right-1 min-w-[1.15rem] h-[1.15rem] px-1 rounded-full bg-coralDanger text-white text-[9px] font-bold flex items-center justify-center"><%= stats.openMessages %></span>
+                    <% } %>
+                </a>
+
+            </div>
+        </header>
+
+        <!-- THE ACTIVE PANEL - every admin button has its own EJS file -->
+        <%- include(tab === 'messages' ? 'messages' : 'panels/' + tab + '.ejs', { user: user, stats: stats, users: users, scores: scores, settings: settings, subjectSettings: subjectSettings, quizzes: quizzes, inbox: inbox, account: account }) %>
+
+    </main>
+
+    <!-- STUDENT DETAIL MODAL -->
+    <div id="studentDetailModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardBg border border-borderBg w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-start gap-4">
+                <div class="min-w-0">
+                    <h3 id="detailStudentName" class="text-lg font-bold text-white truncate">Student</h3>
+                    <p id="detailStudentMeta" class="text-[11px] text-slate-400 truncate"></p>
+                </div>
+                <button onclick="closeStudentDetail()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div class="space-y-3">
+                <div class="p-4 rounded-xl border border-borderBg bg-inputBg/60">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mb-1">Assessment</p>
+                    <p id="detailStudentQuiz" class="text-sm font-bold text-white"></p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="p-4 rounded-xl border border-borderBg bg-inputBg/60">
+                        <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Score</p>
+                        <p id="detailStudentScore" class="text-xl font-extrabold text-white mt-1"></p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-borderBg bg-inputBg/60">
+                        <p class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Submitted</p>
+                        <p id="detailStudentDate" class="text-sm font-bold text-white mt-1"></p>
+                    </div>
+                </div>
+
+                <p id="detailStudentResult" class="text-xs text-slate-400"></p>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeStudentDetail()" class="px-5 py-2 bg-inputBg text-slate-300 rounded-xl border border-borderBg font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <%- include('../partials/foot', { page: 'adminportal', extraScript: tab === 'messages' ? '/js/adminmessages.js' : tab === 'builder' ? '/js/builder.js' : tab === 'account' ? '/js/adminaccount.js' : tab === 'courses' ? '/js/admincourses.js' : null }) %>

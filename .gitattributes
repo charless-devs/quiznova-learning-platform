@@ -1,0 +1,16 @@
+# The files are stored with LF, so the diff of the project stays small on
+# every system (Windows, macOS, Linux).
+* text=auto eol=lf
+
+# The pictures and the videos are binary.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.mp4 binary
+*.webm binary
+*.ogg binary
+*.mov binary
+*.pdf binary

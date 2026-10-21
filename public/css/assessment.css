@@ -1,0 +1,50 @@
+/* ==========================================================================
+   QuizNova - assessments & quizzes
+   ========================================================================== */
+
+/* The assessments page has a slightly cooler border than the rest. */
+:root {
+    --qn-border: 40 45 68; /* #282d44 */
+}
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #282d44;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+@keyframes qnPulseUrgent {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.05);
+    }
+}
+
+.animate-urgent {
+    animation: qnPulseUrgent 1.2s infinite ease-in-out;
+}
+
+/* Question palette states in the live runner */
+.q-nav-btn.is-current {
+    background-color: #7c3aed;
+    color: #fff;
+    border-color: #a78bfa;
+}
+
+.q-nav-btn.is-answered {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border-color: #10b981;
+}
+
+.q-nav-btn.is-flagged {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border-color: #f59e0b;
+}

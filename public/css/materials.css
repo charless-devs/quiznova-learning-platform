@@ -1,0 +1,54 @@
+/* ==========================================================================
+   QuizNova - study materials
+   ========================================================================== */
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #262c42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+.qn-card {
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    box-shadow: var(--qn-card-shadow);
+}
+
+/* Filter chips ------------------------------------------------------- */
+.qn-chip {
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #94a3b8;
+    background-color: rgb(var(--qn-input));
+    border: 1px solid rgb(var(--qn-border));
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.qn-chip:hover {
+    color: #fff;
+    border-color: rgb(var(--qn-border));
+}
+
+.qn-chip.is-active {
+    color: #fff;
+    background-color: rgb(124 58 237 / 0.2);
+    border-color: rgb(139 92 246 / 0.5);
+}
+
+/* Material cards ----------------------------------------------------- */
+.qn-material {
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.qn-material:hover {
+    transform: translateY(-3px);
+    border-color: rgb(139 92 246 / 0.5);
+}
+
+.qn-material.is-hidden {
+    display: none;
+}

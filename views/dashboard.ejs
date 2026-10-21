@@ -1,0 +1,478 @@
+﻿<%- include('partials/head', { title: 'QuizNova - Student Learning Dashboard', page: 'dashboard' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col lg:flex-row antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- MOBILE HEADER NAVBAR -->
+    <header class="lg:hidden flex items-center justify-between p-4 bg-cardBg border-b border-borderBg sticky top-0 z-40">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-coral-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+            </div>
+            <span class="text-base font-bold text-white tracking-tight">Quiz<span class="text-brand-400">Nova</span></span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button data-theme-toggle class="p-2 text-slate-400 hover:text-white rounded-lg bg-inputBg transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                <i data-lucide="sun" class="w-5 h-5"></i>
+            </button>
+            <button onclick="toggleMobileMenu()" class="p-2 text-slate-400 hover:text-white rounded-lg bg-inputBg">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-cardBg border-r border-borderBg flex flex-col justify-between p-5 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto">
+        <div>
+            <!-- Sidebar Header / Logo -->
+            <div class="hidden lg:flex items-center gap-3 mb-8 px-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-coral-500 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-white">Quiz<span class="text-brand-400">Nova</span></span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1">
+                <a href="/dashboard" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 text-white font-semibold text-xs shadow-md shadow-brand-600/20">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/classes" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="book-open" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Classes</span>
+                    </div>
+                </a>
+                <a href="/courses" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Courses</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-brand-500/20 text-brand-300 rounded-full font-bold"><%= courses ? courses.length : 0 %></span>
+                </a>
+                <a href="/materials" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="folder-kanban" class="w-4 h-4"></i>
+                    <span>Materials</span>
+                </a>
+                <a href="/assessment" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="award" class="w-4 h-4"></i>
+                    <span>Assessments</span>
+                </a>
+                <a href="/analytics" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="/community" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span>Community</span>
+                </a>
+                <a href="/messages" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="message-square" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Messages</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-coral-500 text-white rounded-full font-bold">3</span>
+                </a>
+
+                <div class="pt-4 mt-4 border-t border-borderBg/70 space-y-1">
+                    <%- include("partials/admin-link", { user: user }) %>
+                    <a href="/settings" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Sidebar Promo / Countdown Widget -->
+        <div class="mt-6 pt-4 border-t border-borderBg/70">
+            <div class="bg-gradient-to-br from-inputBg to-hoverBg rounded-2xl p-4 border border-borderBg/80 text-center relative overflow-hidden group">
+                <!-- Avatar illustration -->
+                <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-tr from-brand-500 to-coral-500 p-0.5 mb-2 shadow-lg shadow-brand-500/20">
+                    <div class="w-full h-full bg-cardBg rounded-full overflow-hidden flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+                </div>
+
+                <p class="text-xs font-semibold text-white">Ready for assessments?</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">Final Mock Exam starts in</p>
+
+                <!-- Live Countdown Timer Block -->
+                <div class="grid grid-cols-4 gap-1.5 mt-3 text-center">
+                    <div class="bg-coral-500/10 border border-coral-500/30 rounded-lg p-1.5">
+                        <span id="cdDays" class="block text-xs font-extrabold text-coral-400">05</span>
+                        <span class="text-[9px] text-slate-400 uppercase font-semibold">Days</span>
+                    </div>
+                    <div class="bg-coral-500/10 border border-coral-500/30 rounded-lg p-1.5">
+                        <span id="cdHours" class="block text-xs font-extrabold text-coral-400">07</span>
+                        <span class="text-[9px] text-slate-400 uppercase font-semibold">Hrs</span>
+                    </div>
+                    <div class="bg-coral-500/10 border border-coral-500/30 rounded-lg p-1.5">
+                        <span id="cdMins" class="block text-xs font-extrabold text-coral-400">16</span>
+                        <span class="text-[9px] text-slate-400 uppercase font-semibold">Min</span>
+                    </div>
+                    <div class="bg-coral-500/10 border border-coral-500/30 rounded-lg p-1.5">
+                        <span id="cdSecs" class="block text-xs font-extrabold text-coral-400">42</span>
+                        <span class="text-[9px] text-slate-400 uppercase font-semibold">Sec</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <!-- MAIN DASHBOARD CONTENT (MIDDLE & RIGHT SIDE) -->
+    <div class="flex-1 flex flex-col xl:flex-row min-w-0 overflow-y-auto">
+
+        <!-- MIDDLE COLUMN (MAIN ACTIVITY & COURSES) -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl">
+
+            <!-- Top Header & Global Search Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                        <span>Hello <%= user ? user.name : 'Rock Lee' %> !</span>
+                        <span class="text-xl animate-bounce">👋</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-400">Welcome back, you are doing great this week.</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="courseSearchInput" oninput="filterCourses()" placeholder="Search your classes and quizzes..."
+                            class="w-full pl-10 pr-4 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                    </div>
+
+                    <!-- Filter Tag Button -->
+                    <a href="/classes" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white hover:border-brand-500 transition-colors flex-shrink-0" title="Filter your classes">
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                    </a>
+
+                    <!-- Theme Toggle -->
+                    <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white hover:border-slate-600 transition-colors flex-shrink-0" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                        <i data-lucide="sun" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- HERO BANNER SECTION -->
+            <div class="relative bg-gradient-to-r from-brand-800 via-brand-700 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white overflow-hidden shadow-2xl border border-brand-600/30">
+                <div class="relative z-10 max-w-lg space-y-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[11px] font-semibold text-brand-100 border border-white/20">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-coral-400"></i>
+                        Motivational Spotlight
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+                        When nothing goes right, go left.
+                    </h2>
+                    <p class="text-xs sm:text-sm text-brand-100/90 leading-relaxed font-normal">
+                        Build your skills with interactive courses, quizzes, and degrees online from anywhere with professional instructors.
+                    </p>
+                    <div class="pt-2 flex items-center gap-3">
+                        <a href="/courses" class="px-5 py-2.5 bg-coral-500 hover:bg-coral-600 text-white font-semibold text-xs rounded-xl shadow-lg shadow-coral-500/30 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                            <span>Learn More</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                        <a href="/materials" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl backdrop-blur-md transition-all">
+                            Watch Demo
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3D/Vector Illustration SVG floating inside Banner -->
+                <div class="absolute right-2 sm:right-6 bottom-0 top-0 w-1/3 hidden sm:flex items-center justify-center pointer-events-none animate-float">
+                    <svg viewBox="0 0 200 200" class="w-full h-auto max-h-48 drop-shadow-2xl" fill="none">
+                        <circle cx="100" cy="100" r="70" fill="#ec4899" opacity="0.15" />
+                        <!-- Floating Laptop -->
+                        <rect x="40" y="60" width="120" height="75" rx="8" fill="#171a29" stroke="#a78bfa" stroke-width="3"/>
+                        <rect x="48" y="68" width="104" height="59" rx="4" fill="#0f111a"/>
+                        <path d="M70 90 L85 105 L125 75" stroke="#ec4899" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="25" y="137" width="150" height="8" rx="4" fill="#a78bfa"/>
+                        <circle cx="160" cy="50" r="14" fill="#8b5cf6"/>
+                        <path d="M160 42 L160 58 M152 50 L168 50" stroke="white" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- THE PROGRESS CHART - the real scores of the last 7 days -->
+            <div class="bg-cardBg border border-borderBg rounded-3xl p-5 sm:p-6 space-y-4">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <div>
+                        <h3 class="text-base font-bold text-white">Your Progress</h3>
+                        <p class="text-xs text-slate-400">
+                            <% if (progress && progress.hasData) { %>
+                                Your score and your correct answers of the last 7 days
+                            <% } else { %>
+                                Every quiz you take shows up here
+                            <% } %>
+                        </p>
+                    </div>
+
+                    <% if (progress && progress.hasData) { %>
+                        <div class="flex items-center gap-4 text-xs font-medium">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-coral-500 inline-block"></span>
+                                <span class="text-slate-300">The score</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-brand-500 inline-block"></span>
+                                <span class="text-slate-300">The correct answers</span>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+
+                <% if (progress && progress.hasData) { %>
+                    <div class="relative h-48 w-full pt-4">
+                        <svg class="w-full h-full overflow-visible" viewBox="0 0 <%= progress.week.width %> <%= progress.week.height %>" preserveAspectRatio="none" role="img" aria-label="The score and the correct answers of the last 7 days">
+                            <!-- The grid of the chart -->
+                            <% progress.week.grid.forEach(function (line) { %>
+                                <line x1="0" y1="<%= line.y %>" x2="<%= progress.week.width %>" y2="<%= line.y %>" stroke="#262c42" stroke-dasharray="4 4" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                            <% }); %>
+
+                            <defs>
+                                <linearGradient id="gradCoral" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#ec4899" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#ec4899" stop-opacity="0.0"/>
+                                </linearGradient>
+                                <linearGradient id="gradBrand" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.0"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- The areas of the two lines -->
+                            <path d="<%= progress.week.scoreArea %>" fill="url(#gradCoral)"/>
+                            <path d="<%= progress.week.accuracyArea %>" fill="url(#gradBrand)"/>
+
+                            <!-- The share of the correct answers (dashed, so both
+                                 lines stay readable when they are the same) -->
+                            <path d="<%= progress.week.accuracyLine %>" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"/>
+
+                            <!-- The score of the day -->
+                            <path d="<%= progress.week.scoreLine %>" fill="none" stroke="#ec4899" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+
+                            <!-- The days with a quiz -->
+                            <% progress.week.points.forEach(function (point) { if (point.hasData) { %>
+                                <circle cx="<%= point.x %>" cy="<%= point.scoreY %>" r="5" fill="#ec4899" stroke="#171a29" stroke-width="2" vector-effect="non-scaling-stroke">
+                                    <title><%= point.label %>: <%= point.value %>%</title>
+                                </circle>
+                                <circle cx="<%= point.x %>" cy="<%= point.accuracyY %>" r="4" fill="#8b5cf6" stroke="#171a29" stroke-width="2" vector-effect="non-scaling-stroke">
+                                    <title><%= point.label %>: <%= point.accuracy %>% correct</title>
+                                </circle>
+                            <% } }); %>
+                        </svg>
+
+                        <!-- The days of the chart -->
+                        <div class="flex justify-between text-[11px] font-medium text-slate-500 pt-2">
+                            <% progress.week.points.forEach(function (point) { %>
+                                <span><%= point.dateLabel %></span>
+                            <% }); %>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="h-48 w-full flex flex-col items-center justify-center text-center space-y-2">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                            <i data-lucide="line-chart" class="w-6 h-6"></i>
+                        </div>
+                        <p class="text-sm font-bold text-white">No quiz yet</p>
+                        <p class="text-xs text-slate-400">The chart fills up with every quiz you take.</p>
+                        <a href="/assessment" class="inline-flex items-center gap-1.5 mt-1 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl">
+                            <i data-lucide="award" class="w-4 h-4"></i>
+                            <span>Take an assessment</span>
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+
+                        <!-- YOUR COURSES -->
+            <div class="qn-card p-5 flex flex-col sm:flex-row sm:items-center gap-5">
+                <div class="w-12 h-12 rounded-2xl bg-brand-500/15 text-brand-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-base font-bold text-white">Your Courses</h3>
+                    <p class="text-xs text-slate-400 mt-1 truncate">
+                        <% if (courses && courses.length) { %>
+                            <%= courses.slice(0, 4).map(function (course) { return course.title; }).join(', ') %><%= courses.length > 4 ? ' and ' + (courses.length - 4) + ' more' : '' %>.
+                        <% } else { %>
+                            No course published yet - the administrator is working on it.
+                        <% } %>
+                    </p>
+                    <div class="flex items-center gap-3 mt-3">
+                        <div class="h-1.5 flex-1 max-w-xs rounded-full bg-slate-800 overflow-hidden">
+                            <div class="h-full rounded-full bg-gradient-to-r from-brand-500 to-coral-500" style="width: <%= courses && courses.length ? 56 : 0 %>%"></div>
+                        </div>
+                        <span class="text-[10px] font-bold text-brand-400"><%= courses ? courses.length : 0 %> course<%= courses && courses.length === 1 ? '' : 's' %></span>
+                    </div>
+                </div>
+                <a href="/courses" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold shadow-lg shadow-brand-600/25 transition-all flex-shrink-0">
+                    <span>Open my courses</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+            </div>
+
+        </main>
+
+        <!-- RIGHT SIDEBAR COLUMN (PROFILE, CLASSES SCHEDULE & DAILY TASKS) -->
+        <aside class="w-full xl:w-80 bg-cardBg border-t xl:border-t-0 xl:border-l border-borderBg p-5 sm:p-6 space-y-6 flex-shrink-0">
+            
+            <!-- User Profile & Notification Bar -->
+            <div class="flex items-center justify-between pb-4 border-b border-borderBg/70">
+                <a href="/profile" class="group flex items-center gap-3 flex-1 min-w-0 rounded-xl px-2 py-1.5 -mx-2 hover:bg-hoverBg transition-colors" title="Open my progress">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="<%= user ? user.name : 'Student' %>" class="w-10 h-10 rounded-xl object-cover ring-2 ring-brand-500/50 group-hover:ring-brand-400 transition-all flex-shrink-0">
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-bold text-white truncate group-hover:text-brand-300 transition-colors"><%= user ? user.name : 'Rock Lee' %></h4>
+                        <p class="text-[10px] font-medium text-slate-400 group-hover:text-slate-300 transition-colors">View my progress</p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 ml-auto text-slate-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0"></i>
+                </a>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="openNotifications()" class="relative p-2 rounded-xl bg-inputBg border border-borderBg text-slate-300 hover:text-white transition-colors" title="Your notifications">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        <span id="notificationDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-coral-500 hidden"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- YOUR CLASSES / SCHEDULE TIMELINE -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-white">Your Classes</h3>
+                    <span class="text-[11px] font-semibold text-slate-400"><%= today %></span>
+                </div>
+
+                <!-- Timeline Container -->
+                <div class="relative pl-6 space-y-4 pt-2">
+                    <!-- Vertical Line -->
+                    <div class="absolute left-2.5 top-0 bottom-0 w-0.5 bg-borderBg"></div>
+
+                    <!-- Schedule Slot 1 -->
+                    <div class="relative">
+                        <span class="text-[10px] font-semibold text-slate-500 block mb-1">10:00 AM</span>
+                        <div class="p-3 bg-inputBg border border-borderBg rounded-xl space-y-2 hover:border-brand-500/50 transition-colors">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-white">General English</span>
+                                <span class="text-[10px] text-brand-400 font-semibold bg-brand-500/10 px-2 py-0.5 rounded-md">45 mins</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                                <i data-lucide="user" class="w-3 h-3 text-slate-500"></i>
+                                <span>Minato Namikaze</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Current Time Line Indicator -->
+                    <div class="relative flex items-center my-2">
+                        <div class="w-3 h-3 rounded-full bg-coral-500 absolute -left-6 border-2 border-cardBg animate-pulse-dot"></div>
+                        <div class="w-full border-t-2 border-coral-500 border-dashed"></div>
+                        <span class="text-[9px] font-extrabold text-coral-400 ml-2 bg-coral-500/20 px-1.5 py-0.5 rounded">11:39 NOW</span>
+                    </div>
+
+                    <!-- Schedule Slot 2 -->
+                    <div class="relative">
+                        <span class="text-[10px] font-semibold text-slate-500 block mb-1">12:00 PM</span>
+                        <div class="p-3 bg-inputBg border border-borderBg rounded-xl space-y-2 hover:border-brand-500/50 transition-colors">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-white">Graphic Design</span>
+                                <span class="text-[10px] text-coral-400 font-semibold bg-coral-500/10 px-2 py-0.5 rounded-md">1 hour</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                                <i data-lucide="user" class="w-3 h-3 text-slate-500"></i>
+                                <span>Jiraiya Sensei</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAILY TASKS INTERACTIVE CHECKLIST -->
+            <div class="space-y-3 pt-2">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-white">Daily Tasks</h3>
+                    <span class="text-[11px] font-medium text-slate-400"><span id="completedTaskCount">1</span>/3 done</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    
+                    <!-- Task 1 -->
+                    <div onclick="toggleTask(this)" class="task-item p-3 rounded-xl bg-indigo-950/40 border border-indigo-800/40 cursor-pointer hover:border-brand-500 transition-all flex flex-col justify-between h-24">
+                        <div class="flex items-start justify-between">
+                            <span class="text-xs font-semibold text-white leading-tight">Sketch a pot outline</span>
+                            <input type="checkbox" class="task-checkbox rounded border-slate-600 bg-inputBg text-brand-600 focus:ring-0 cursor-pointer">
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                            <span class="px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-300">#design</span>
+                            <span>30 min</span>
+                        </div>
+                    </div>
+
+                    <!-- Task 2 -->
+                    <div onclick="toggleTask(this)" class="task-item p-3 rounded-xl bg-pink-950/40 border border-pink-800/40 cursor-pointer hover:border-coral-500 transition-all flex flex-col justify-between h-24 opacity-60">
+                        <div class="flex items-start justify-between">
+                            <span class="text-xs font-semibold text-white leading-tight line-through">Do activity list</span>
+                            <input type="checkbox" checked class="task-checkbox rounded border-slate-600 bg-inputBg text-coral-500 focus:ring-0 cursor-pointer">
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                            <span class="px-1.5 py-0.5 rounded bg-coral-500/20 text-coral-300">#writing</span>
+                            <span>15 min</span>
+                        </div>
+                    </div>
+
+                    <!-- Task 3 -->
+                    <div onclick="toggleTask(this)" class="task-item p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/40 cursor-pointer hover:border-emerald-500 transition-all flex flex-col justify-between h-24 col-span-2">
+                        <div class="flex items-start justify-between">
+                            <span class="text-xs font-semibold text-white leading-tight">Complete English Chapter 4 Quiz</span>
+                            <input type="checkbox" class="task-checkbox rounded border-slate-600 bg-inputBg text-emerald-500 focus:ring-0 cursor-pointer">
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] text-slate-400">
+                            <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">#quiz</span>
+                            <span>20 min</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- LOGOUT BUTTON -->
+            <div class="pt-4 border-t border-borderBg/70">
+                <button onclick="logout()" class="w-full py-2.5 px-4 bg-inputBg hover:bg-rose-950/50 hover:text-rose-300 text-slate-400 text-xs font-semibold rounded-xl border border-borderBg hover:border-rose-500/40 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Log Out</span>
+                </button>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- COURSE DETAIL MODAL -->
+
+    <!-- NOTIFICATIONS PANEL -->
+    <div id="notificationsModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardBg border border-borderBg w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Notifications</h3>
+                <button onclick="closeNotifications()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div id="notificationList" class="space-y-2 max-h-80 overflow-y-auto">
+                <p class="text-sm text-slate-400">Loading...</p>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeNotifications()" class="px-5 py-2 bg-inputBg text-slate-300 rounded-xl border border-borderBg font-semibold text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <%- include('partials/foot', { page: 'dashboard' }) %>

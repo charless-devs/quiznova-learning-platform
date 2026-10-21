@@ -1,0 +1,17 @@
+/* ==========================================================================
+   QuizNova - my courses
+   ========================================================================== */
+
+body {
+    --qn-scroll-size: 5px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #262c42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+.qn-card {
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    box-shadow: var(--qn-card-shadow);
+}

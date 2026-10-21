@@ -1,0 +1,8 @@
+    <!-- Scripts (public/js) -->
+    <script src="/js/shared.js"></script>
+    <script src="/js/<%= page %>.js"></script>
+    <% if (typeof extraScript !== 'undefined' && extraScript) { %>
+        <script src="<%= extraScript %>"></script>
+    <% } %>
+</body>
+</html>

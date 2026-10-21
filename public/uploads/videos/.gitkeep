@@ -1,0 +1,5 @@
+The videos the admin uploads land in this folder (public/uploads/videos).
+
+The folder itself is part of the project - the files inside are not, they
+belong to the database. The app creates the folder on its own if it is
+missing.

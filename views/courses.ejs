@@ -1,0 +1,176 @@
+<%- include('partials/head', { title: 'QuizNova - My Courses', page: 'courses' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-appBg/85 border-b border-borderBg/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="<%= user && user.role === 'admin' ? '/admin' : '/dashboard' %>" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="<%= user && user.role === 'admin' ? 'Back to the admin portal' : 'Back to the dashboard' %>">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-white tracking-tight">My Courses</h1>
+                    <p class="text-[11px] text-slate-400">Everything you are learning right now</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <div class="relative flex-1 sm:w-72">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" id="courseSearchInput" oninput="filterCourses()" placeholder="Search courses or topics..."
+                        class="w-full pl-10 pr-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                </div>
+
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+<!-- YOUR COURSES SECTION -->
+            <div id="courses" class="space-y-4 scroll-mt-24">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-white">Your Courses</h3>
+                        <p class="text-xs text-slate-400"><span id="courseCount"><%= courses.length %></span> courses to learn</p>
+                    </div>
+                    <a href="/classes" class="text-xs font-semibold text-brand-400 hover:text-brand-300 transition-colors">View All</a>
+                </div>
+
+                <!-- The courses of the platform -->
+                <div id="coursesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <% courses.forEach(function (course) { %>
+                        <% const minutes = Math.round((course.duration || 0) / 60); %>
+                        <div class="course-card bg-cardBg border border-borderBg hover:border-brand-500/50 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group cursor-pointer" role="button" tabindex="0"
+                            data-course="<%= course.id %>" data-title="<%= course.title %>" data-instructor="<%= course.instructor || '' %>" data-progress="0">
+
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
+                                        <i data-lucide="<%= course.icon || 'graduation-cap' %>" class="w-5 h-5"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <h4 class="text-sm font-bold text-white group-hover:text-brand-300 transition-colors truncate"><%= course.title %></h4>
+                                        <p class="text-[11px] text-slate-400 truncate">
+                                            <%= course.subject %><% if (course.instructor) { %> · <%= course.instructor %><% } %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <% if (course.description) { %>
+                                <p class="text-[11px] text-slate-400 mt-3 leading-relaxed line-clamp-2"><%= course.description %></p>
+                            <% } %>
+
+                            <!-- The stats of the course -->
+                            <div class="grid grid-cols-2 gap-2 my-4 text-[11px] text-slate-400">
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="video" class="w-3.5 h-3.5 text-brand-400"></i>
+                                    <span><%= course.video_count || 0 %> video<%= (course.video_count || 0) === 1 ? '' : 's' %></span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-400"></i>
+                                    <span><%= minutes ? minutes + ' minutes' : 'new' %></span>
+                                </div>
+                            </div>
+
+                            <% if (course.completed_count) { %>
+                                <div class="space-y-1.5 mb-4">
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400 font-medium">Your progress</span>
+                                        <span class="text-brand-400 font-bold"><%= course.completed_count %> of <%= course.video_count || 0 %> lessons done</span>
+                                    </div>
+                                    <div class="w-full h-1.5 bg-inputBg rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-brand-500 to-coral-500 rounded-full" style="width: <%= course.video_count ? Math.round((course.completed_count / course.video_count) * 100) : 0 %>%"></div>
+                                    </div>
+                                </div>
+                            <% } %>
+
+                            <button onclick="openCoursePlayer(<%= course.id %>)" class="w-full py-2 bg-inputBg hover:bg-brand-600 text-slate-200 hover:text-white text-xs font-semibold rounded-xl border border-borderBg hover:border-brand-500 transition-all text-center">
+                                <%= (course.video_count || 0) ? 'Watch the course' : 'Open the course' %>
+                            </button>
+                        </div>
+                    <% }); %>
+
+                    <% if (!courses.length) { %>
+                        <div class="md:col-span-2 p-8 rounded-2xl bg-cardBg border border-borderBg text-center space-y-2">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-500/15 text-brand-400 flex items-center justify-center mx-auto">
+                                <i data-lucide="video" class="w-6 h-6"></i>
+                            </div>
+                            <p class="text-sm font-bold text-white">No course yet</p>
+                            <p class="text-xs text-slate-400">The administrator has not published a course. Have a look at the assessments instead.</p>
+                            <a href="/assessment" class="inline-flex items-center gap-1.5 mt-2 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl">
+                                <i data-lucide="award" class="w-4 h-4"></i>
+                                <span>The assessments</span>
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+    </main>
+
+<!-- THE PLAYER -->
+<div id="courseModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-cardBg border border-borderBg w-full max-w-5xl rounded-2xl shadow-2xl relative overflow-hidden max-h-[92vh] flex flex-col">
+        <button onclick="closeCourseModal()" class="absolute top-4 right-4 z-10 text-slate-400 hover:text-white bg-black/40 rounded-lg p-1.5" title="Close">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 flex-1 min-h-0">
+            <!-- The video -->
+            <div class="lg:col-span-2 bg-black flex flex-col min-h-0">
+                <div id="playerFrame" class="aspect-video w-full bg-black shrink-0 flex items-center justify-center">
+                    <p class="text-xs text-slate-500">This course has no video yet.</p>
+                </div>
+
+                <!-- The tools of the player -->
+                <div class="px-5 py-3 border-b border-borderBg flex flex-wrap items-center gap-3">
+                    <button id="playerDone" type="button" class="hidden px-3 py-1.5 rounded-lg bg-emeraldSuccess/15 text-emerald-300 border border-emeraldSuccess/30 text-[11px] font-bold transition-colors hover:bg-emeraldSuccess/25 flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                        <span>Mark as done</span>
+                    </button>
+
+                    <button id="playerNext" type="button" class="hidden px-3 py-1.5 rounded-lg bg-brandBlue/15 text-brand-300 border border-brandBlue/30 text-[11px] font-bold transition-colors hover:bg-brandBlue/25 flex items-center gap-1.5 max-w-[220px]">
+                        <span class="truncate">The next lesson</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                    </button>
+
+                    <div class="ml-auto flex items-center gap-2">
+                        <label for="playerSpeed" class="text-[11px] text-slate-400">Speed</label>
+                        <select id="playerSpeed" class="px-2 py-1 bg-inputBg border border-borderBg rounded-lg text-[11px] text-slate-300 focus:outline-none focus:border-brandBlue">
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-5 space-y-1">
+                    <span class="text-[10px] font-bold text-brand-400 uppercase tracking-wider">Now playing</span>
+                    <h3 id="modalTitle" class="text-lg font-bold text-white truncate">Course Title</h3>
+                    <p id="modalInstructor" class="text-xs text-slate-400 truncate">Instructor</p>
+                </div>
+            </div>
+
+            <!-- The lessons of the course -->
+            <div class="p-5 space-y-3 overflow-y-auto border-t lg:border-t-0 lg:border-l border-borderBg">
+                <h4 class="text-xs font-bold text-white">The lessons</h4>
+                <div id="playerList" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'courses' }) %>
+</body>
+</html>

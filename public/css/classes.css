@@ -1,0 +1,26 @@
+/* ==========================================================================
+   QuizNova - my classes
+   ========================================================================== */
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #262c42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+@keyframes qnLivePulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.4;
+        transform: scale(1.15);
+    }
+}
+
+.animate-live {
+    animation: qnLivePulse 1.8s ease-in-out infinite;
+}

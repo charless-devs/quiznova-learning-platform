@@ -1,0 +1,148 @@
+<div class="qn-admin-panel p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+<%# Admin panel: courses - included by admin/adminportal.ejs %>
+<!-- THE HEADER -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-white tracking-tight">Courses &amp; Videos</h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-0.5">The lessons of the platform - upload a video file or set a link to one.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="coursesNew" type="button" class="px-4 py-2 bg-brandBlue hover:bg-brandHover text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>New course</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- 1. THE COURSES (4 columns) -->
+                <div class="lg:col-span-4 bg-cardBg border border-borderBg rounded-2xl p-4 space-y-3">
+                    <div class="flex items-center justify-between px-1">
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">The courses</span>
+                        <span id="coursesCount" class="text-[10px] font-mono text-slate-500"></span>
+                    </div>
+
+                    <div id="coursesList" class="space-y-2 max-h-[34rem] overflow-y-auto pr-1">
+                        <p class="qn-admin-loading">The courses are loading...</p>
+                    </div>
+                </div>
+
+                <!-- 2. THE COURSE AND ITS VIDEOS (8 columns) -->
+                <div class="lg:col-span-8 space-y-6">
+
+                    <!-- The details of the course -->
+                    <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between gap-3 border-b border-borderBg pb-3">
+                            <h3 class="text-sm font-extrabold text-white">The course</h3>
+                            <span id="courseState" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-inputBg text-slate-400">No course</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-slate-400 font-semibold mb-1 text-[11px]" for="courseTitle">Title</label>
+                                <input type="text" id="courseTitle" placeholder="Algebra Basics"
+                                    class="w-full px-3 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brandBlue transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 font-semibold mb-1 text-[11px]" for="courseSubject">Subject</label>
+                                <select id="courseSubject" class="w-full px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-sm text-white focus:outline-none focus:border-brandBlue">
+                                    <% subjects.forEach(function (subject) { %>
+                                        <option value="<%= subject.name %>"><%= subject.name %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 font-semibold mb-1 text-[11px]" for="courseInstructor">Instructor</label>
+                                <input type="text" id="courseInstructor" placeholder="Who teaches it"
+                                    class="w-full px-3 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brandBlue transition-colors">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 font-semibold mb-1 text-[11px]" for="courseStatus">Status</label>
+                                <select id="courseStatus" class="w-full px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-sm text-white focus:outline-none focus:border-brandBlue">
+                                    <option value="DRAFT">Draft</option>
+                                    <option value="PUBLISHED">Published</option>
+                                    <option value="COMPLETED">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-400 font-semibold mb-1 text-[11px]" for="courseDescription">Description</label>
+                            <textarea id="courseDescription" rows="2" placeholder="What is this course about?"
+                                class="w-full px-3 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brandBlue transition-colors"></textarea>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2 pt-1">
+                            <button id="coursesDelete" type="button" class="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-bold rounded-xl transition-all">
+                                Delete
+                            </button>
+                            <button id="coursesSave" type="button" class="px-5 py-2 bg-brandBlue hover:bg-brandHover text-white text-xs font-bold rounded-xl shadow-md transition-all">
+                                Save the course
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- The videos of the course -->
+                    <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between gap-3 border-b border-borderBg pb-3">
+                            <div>
+                                <h3 class="text-sm font-extrabold text-white">The videos</h3>
+                                <p class="text-[11px] text-slate-400">What the students watch in their portal.</p>
+                            </div>
+                            <span id="videosCount" class="text-[10px] font-mono text-slate-500"></span>
+                        </div>
+
+                        <div id="courseVideos" class="space-y-2">
+                            <p class="qn-admin-loading">The videos are loading...</p>
+                        </div>
+
+                        <!-- Add a video with a link -->
+                        <div class="rounded-xl border border-dashed border-borderBg p-4 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="link-2" class="w-4 h-4 text-brandBlue"></i>
+                                <span class="text-xs font-bold text-white">Add a video with a link</span>
+                                <span class="text-[10px] text-slate-500">YouTube, Vimeo or a direct mp4</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input type="text" id="videoTitle" placeholder="The title of the video"
+                                    class="w-full px-3 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brandBlue transition-colors">
+                                <input type="url" id="videoUrl" placeholder="https://youtube.com/watch?v=..."
+                                    class="w-full px-3 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brandBlue transition-colors">
+                            </div>
+
+                            <button id="videoAddLink" type="button" class="px-4 py-2 bg-inputBg hover:bg-borderBg text-slate-200 text-xs font-bold rounded-xl border border-borderBg transition-all">
+                                Add the link
+                            </button>
+                        </div>
+
+                        <!-- Upload a video file -->
+                        <div class="rounded-xl border border-dashed border-brandBlue/40 bg-brandBlue/5 p-4 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="upload-cloud" class="w-4 h-4 text-brandBlue"></i>
+                                <span class="text-xs font-bold text-white">Upload a video file</span>
+                                <span class="text-[10px] text-slate-500">mp4, webm, ogg, ogv, mov - up to 200 MB</span>
+                            </div>
+
+                            <input type="file" id="videoFile" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/*"
+                                class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-inputBg file:text-slate-300 file:text-xs file:font-semibold">
+
+                            <div class="hidden" id="uploadBox">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1.5">
+                                    <span id="uploadName">the video</span>
+                                    <span id="uploadPercent">0%</span>
+                                </div>
+                                <div class="h-2 w-full bg-inputBg rounded-full overflow-hidden">
+                                    <div id="uploadBar" class="h-full w-0 bg-brandBlue rounded-full transition-all"></div>
+                                </div>
+                            </div>
+
+                            <button id="videoUpload" type="button" class="px-4 py-2 bg-brandBlue hover:bg-brandHover text-white text-xs font-bold rounded-xl shadow-md transition-all">
+                                Upload the video
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>

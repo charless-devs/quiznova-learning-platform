@@ -1,0 +1,67 @@
+<%- include('partials/head', { title: 'QuizNova - Community', page: 'community' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-appBg/85 border-b border-borderBg/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="<%= user && user.role === 'admin' ? '/admin' : '/dashboard' %>" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="<%= user && user.role === 'admin' ? 'Back to the admin portal' : 'Back to the dashboard' %>">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-white tracking-tight">Community</h1>
+                    <p class="text-[11px] text-slate-400">Study groups, discussions and shared resources</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- PLACEHOLDER: the community is still being built -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex items-center justify-center">
+        <section class="qn-card w-full max-w-lg p-10 sm:p-14 text-center space-y-5">
+
+            <div class="qn-soon-icon mx-auto w-20 h-20 rounded-3xl bg-brand-500/10 text-brand-400 flex items-center justify-center">
+                <i data-lucide="users" class="w-9 h-9"></i>
+            </div>
+
+            <div class="space-y-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-bold uppercase tracking-wider">
+                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                    Coming soon
+                </span>
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">The community is being updated</h2>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    This space is not open yet. Study groups, discussions and shared
+                    resources are on their way - keep taking quizzes in the meantime.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+                <a href="/dashboard" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-600/25 transition-all">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Back to the dashboard</span>
+                </a>
+                <a href="/materials" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-inputBg hover:bg-hoverBg border border-borderBg text-slate-300 hover:text-white font-semibold text-sm transition-all">
+                    <i data-lucide="folder-kanban" class="w-4 h-4"></i>
+                    <span>Study materials</span>
+                </a>
+            </div>
+
+            <div class="flex items-center justify-center gap-2 pt-4 border-t border-borderBg/60 text-[11px] text-slate-500">
+                <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+                <span>We will let you know as soon as it opens.</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'community' }) %>

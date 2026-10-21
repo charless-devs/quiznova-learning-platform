@@ -1,0 +1,353 @@
+<%- include('partials/head', { title: 'QuizNova - Authentication Portal', page: 'register_login' }) %>
+<body class="bg-darkBg text-slate-100 min-h-screen flex items-center justify-center p-3 sm:p-6 md:p-10 relative overflow-x-hidden selection:bg-brand-500 selection:text-white" data-next="<%= typeof next !== 'undefined' && next ? next : '' %>">
+
+    <!-- Background Ambient Glows -->
+    <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-600/20 rounded-full blur-[140px] pointer-events-none animate-glow"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[140px] pointer-events-none animate-glow" style="animation-delay: 2s;"></div>
+
+    <!-- Back to Home Button -->
+    <a href="/" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-50 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-panelBg/80 backdrop-blur-md border border-borderBg text-xs font-semibold text-slate-300 hover:text-white hover:border-brand-500/50 shadow-lg transition-all hover:-translate-y-0.5 group">
+        <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></i>
+        <span>Back to Homepage</span>
+    </a>
+
+    <!-- Theme Toggle -->
+    <button data-theme-toggle class="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 p-2.5 rounded-xl bg-panelBg/80 backdrop-blur-md border border-borderBg text-slate-300 hover:text-white hover:border-brand-500/50 shadow-lg transition-all hover:-translate-y-0.5" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+        <i data-lucide="sun" class="w-4 h-4"></i>
+    </button>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- MAIN SPLIT CARD CONTAINER -->
+    <main class="w-full max-w-5xl bg-panelBg border border-borderBg/80 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px] relative z-10 my-auto">
+
+        <!-- LEFT SIDE: ACTIVE FORM PANEL (LOGIN / REGISTER) -->
+        <div class="lg:col-span-6 p-6 sm:p-10 md:p-12 flex flex-col justify-between relative bg-panelBg z-20">
+            
+            <!-- Top Header Logo -->
+            <div class="flex items-center justify-between mb-8">
+                <a href="/" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <span class="text-lg font-bold tracking-tight text-white">Quiz<span class="text-brand-400">Nova</span></span>
+                </a>
+
+                <div class="text-xs text-slate-400">
+                    <span id="headerSwitchText">New here?</span>
+                    <button type="button" onclick="toggleAuthMode()" id="headerSwitchBtn" class="ml-1 font-semibold text-brand-400 hover:text-brand-300 hover:underline transition-all">
+                        Create account
+                    </button>
+                </div>
+            </div>
+
+            <!-- LOGIN FORM VIEW -->
+            <div id="loginView" class="animate-fade-in my-auto space-y-6">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Login</h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1.5">Enter your account credentials to access your portal</p>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-4" novalidate>
+                    <!-- Username or Email -->
+                    <div class="space-y-1.5">
+                        <label for="loginIdentifier" class="block text-xs font-semibold text-slate-300">Username or Email</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                            </div>
+                            <input type="text" id="loginIdentifier" placeholder="student@quiznova.edu" required
+                                class="w-full pl-10 pr-4 py-3 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                        </div>
+                        <p id="loginIdentifierError" class="text-[11px] text-rose-400 hidden"></p>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label for="loginPassword" class="block text-xs font-semibold text-slate-300">Password</label>
+                            <button type="button" onclick="openForgotModal()" class="text-xs font-medium text-brand-400 hover:text-brand-300 hover:underline">
+                                Forgot Password?
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <i data-lucide="lock" class="w-4 h-4"></i>
+                            </div>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required
+                                class="w-full pl-10 pr-11 py-3 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                            <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginPassIcon')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-300">
+                                <i data-lucide="eye" id="loginPassIcon" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <p id="loginPasswordError" class="text-[11px] text-rose-400 hidden"></p>
+                    </div>
+
+                    <!-- Remember Me Checkbox -->
+                    <div class="flex items-center justify-between pt-1">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-borderBg bg-inputBg text-brand-600 focus:ring-brand-500 focus:ring-offset-0 cursor-pointer">
+                            <span class="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">Remember me on this device</span>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="loginBtn" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-brand-600/30 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 group mt-2">
+                        <span>Sign In to Portal</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </form>
+
+                <!-- Divider & Social Quick Logins -->
+                <div class="pt-2">
+                    <div class="relative flex py-2 items-center">
+                        <div class="flex-grow border-t border-borderBg"></div>
+                        <span class="flex-shrink mx-3 text-[11px] font-medium text-slate-500 uppercase tracking-wider">Or continue with</span>
+                        <div class="flex-grow border-t border-borderBg"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mt-3">
+                        <button type="button" onclick="triggerSocialAuth('Google')" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-inputBg hover:bg-slate-800 border border-borderBg rounded-xl text-xs font-medium text-slate-300 hover:text-white transition-colors">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12s.7 2.3 1.9 4.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+                            <span>Google</span>
+                        </button>
+                        <button type="button" onclick="triggerSocialAuth('GitHub')" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-inputBg hover:bg-slate-800 border border-borderBg rounded-xl text-xs font-medium text-slate-300 hover:text-white transition-colors">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.1c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.78 1.05.78 2.12v3.14c0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg>
+                            <span>GitHub</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REGISTER FORM VIEW (Hidden by default) -->
+            <div id="registerView" class="hidden animate-fade-in my-auto space-y-5">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Create Account</h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">Join QuizNova to track progress and unlock quizzes</p>
+                </div>
+
+                <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-3.5" novalidate>
+                    <!-- Full Name -->
+                    <div class="space-y-1">
+                        <label for="regFullName" class="block text-xs font-semibold text-slate-300">Full Name</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                            </div>
+                            <input type="text" id="regFullName" placeholder="Alex Morgan" required
+                                class="w-full pl-10 pr-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                        </div>
+                        <p id="regFullNameError" class="text-[11px] text-rose-400 hidden"></p>
+                    </div>
+
+                    <!-- Email Address -->
+                    <div class="space-y-1">
+                        <label for="regEmail" class="block text-xs font-semibold text-slate-300">Email Address</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                            </div>
+                            <input type="email" id="regEmail" placeholder="alex.morgan@example.com" required
+                                class="w-full pl-10 pr-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                        </div>
+                        <p id="regEmailError" class="text-[11px] text-rose-400 hidden"></p>
+                    </div>
+
+                    <!-- Subject Focus Dropdown -->
+                    <div class="space-y-1">
+                        <label for="regSubject" class="block text-xs font-semibold text-slate-300">Primary Learning Focus</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                                <i data-lucide="book-open" class="w-4 h-4"></i>
+                            </div>
+                            <select id="regSubject" required class="w-full pl-10 pr-8 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all appearance-none cursor-pointer">
+                                <option value="" disabled selected>Select primary subject...</option>
+                                <% subjects.forEach(function (subject) { %>
+                                    <option value="<%= subject.name %>"><%= subject.name %></option>
+                                <% }); %>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-500">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                        <p id="regSubjectError" class="text-[11px] text-rose-400 hidden"></p>
+                    </div>
+
+                    <!-- Password and Confirm Password Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                            <label for="regPassword" class="block text-xs font-semibold text-slate-300">Password</label>
+                            <div class="relative">
+                                <input type="password" id="regPassword" placeholder="Min 6 chars" required
+                                    class="w-full px-3 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                            </div>
+                            <p id="regPasswordError" class="text-[11px] text-rose-400 hidden"></p>
+                        </div>
+                        <div class="space-y-1">
+                            <label for="regConfirmPassword" class="block text-xs font-semibold text-slate-300">Confirm Password</label>
+                            <div class="relative">
+                                <input type="password" id="regConfirmPassword" placeholder="Re-enter password" required
+                                    class="w-full px-3 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                            </div>
+                            <p id="regConfirmPasswordError" class="text-[11px] text-rose-400 hidden"></p>
+                        </div>
+                    </div>
+
+                    <!-- Terms Agreement -->
+                    <div class="flex items-start gap-2 pt-1">
+                        <input type="checkbox" id="termsAgree" required class="mt-0.5 w-4 h-4 rounded border-borderBg bg-inputBg text-brand-600 focus:ring-brand-500 cursor-pointer">
+                        <label for="termsAgree" class="text-[11px] text-slate-400 leading-snug cursor-pointer">
+                            I agree to QuizNova's <a href="/#about" class="text-brand-400 hover:underline">Terms of Service</a> and <a href="/#about" class="text-brand-400 hover:underline">Privacy Policy</a>.
+                        </label>
+                    </div>
+                    <p id="termsError" class="text-[11px] text-rose-400 hidden"></p>
+
+                    <!-- Submit Register Button -->
+                    <button type="submit" id="regBtn" class="w-full py-3 px-4 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-brand-600/30 transition-all duration-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 group mt-2">
+                        <span>Register Account</span>
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Footer Small Switch Bar -->
+            <div class="pt-6 border-t border-borderBg/60 text-center sm:text-left flex items-center justify-between text-[11px] text-slate-500">
+                <span>© 2026 QuizNova Inc.</span>
+                <div class="flex items-center gap-3">
+                    <a href="/#about" class="hover:text-slate-300 transition-colors">Privacy</a>
+                    <span>•</span>
+                    <a href="/#about" class="hover:text-slate-300 transition-colors">Help Center</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: VIBRANT PURPLE ACCENT & ARTWORK PANEL -->
+        <div class="lg:col-span-6 bg-gradient-to-br from-brand-600 via-brand-700 to-indigo-900 p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden text-white min-h-[380px] lg:min-h-full">
+            
+            <!-- Dynamic Background Waves & Geometric Shapes -->
+            <div class="absolute inset-0 pointer-events-none opacity-20">
+                <svg class="w-full h-full" viewBox="0 0 400 600" fill="none" preserveAspectRatio="none">
+                    <path d="M-50 100 C150 200 100 400 450 500" stroke="white" stroke-width="2" stroke-dasharray="6 6"/>
+                    <path d="M-20 300 C200 150 250 450 420 200" stroke="white" stroke-width="1.5"/>
+                    <circle cx="320" cy="120" r="80" fill="white" opacity="0.1" />
+                    <circle cx="80" cy="480" r="120" fill="white" opacity="0.1" />
+                </svg>
+            </div>
+
+            <!-- Top Banner Header Text -->
+            <div class="relative z-10 space-y-2 max-w-md">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-brand-100">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
+                    <span>Official Learning Portal</span>
+                </div>
+                <h2 id="portalBannerTitle" class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                    Welcome to <br/>student portal
+                </h2>
+                <p id="portalBannerDesc" class="text-xs sm:text-sm text-brand-100/80 font-medium">
+                    Log in to access your customized quizzes, stats, and achievements.
+                </p>
+            </div>
+
+            <!-- MIDDLE VECTOR ARTWORK (SVG Illustration of Student & Learning) -->
+            <div class="relative z-10 my-6 flex items-center justify-center">
+                <div class="w-full max-w-xs sm:max-w-sm animate-float">
+                    <svg viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto drop-shadow-2xl">
+                        <!-- Stylized Laptop Screen -->
+                        <rect x="50" y="40" width="220" height="140" rx="12" fill="#090d16" stroke="#a78bfa" stroke-width="3"/>
+                        <rect x="62" y="52" width="196" height="116" rx="6" fill="#111726"/>
+                        
+                        <!-- Quiz Interface Mock elements inside screen -->
+                        <rect x="75" y="66" width="90" height="10" rx="3" fill="#8b5cf6"/>
+                        <rect x="75" y="86" width="170" height="6" rx="3" fill="#232d42"/>
+                        <rect x="75" y="98" width="140" height="6" rx="3" fill="#232d42"/>
+
+                        <!-- Options mock pills -->
+                        <rect x="75" y="115" width="80" height="18" rx="6" fill="#1a2234" stroke="#8b5cf6" stroke-width="1.5"/>
+                        <circle cx="85" cy="124" r="3" fill="#10b981"/>
+                        <rect x="94" y="121" width="45" height="6" rx="2" fill="#ffffff"/>
+
+                        <rect x="165" y="115" width="80" height="18" rx="6" fill="#1a2234" stroke="#232d42" stroke-width="1.5"/>
+                        <circle cx="175" cy="124" r="3" fill="#64748b"/>
+                        <rect x="184" y="121" width="45" height="6" rx="2" fill="#64748b"/>
+
+                        <rect x="75" y="140" width="80" height="18" rx="6" fill="#1a2234" stroke="#232d42" stroke-width="1.5"/>
+                        <circle cx="85" cy="149" r="3" fill="#64748b"/>
+                        <rect x="94" y="146" width="45" height="6" rx="2" fill="#64748b"/>
+
+                        <!-- Laptop Base -->
+                        <path d="M20 185 C20 180 30 180 40 180 L280 180 C290 180 300 180 300 185 L310 192 C310 196 300 200 290 200 L30 200 C20 200 10 196 10 192 Z" fill="#1e1b4b" stroke="#7c3aed" stroke-width="2"/>
+                        <rect x="135" y="182" width="50" height="4" rx="2" fill="#a78bfa"/>
+
+                        <!-- Floating Badges / Sparkles -->
+                        <g class="animate-pulse">
+                            <circle cx="42" cy="70" r="18" fill="#8b5cf6" opacity="0.9"/>
+                            <path d="M42 62 L44 68 L50 70 L44 72 L42 78 L40 72 L34 70 L40 68 Z" fill="white"/>
+                        </g>
+
+                        <g class="animate-bounce" style="animation-duration: 3s;">
+                            <rect x="250" cy="25" width="40" height="40" rx="10" fill="#10b981" opacity="0.9"/>
+                            <path d="M262 45 L268 51 L278 39" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Dynamic Rotating Motivational Quotes Footer -->
+            <div class="relative z-10 pt-4 border-t border-white/15">
+                <div id="quoteBox" class="transition-opacity duration-300">
+                    <p id="quoteText" class="text-xs sm:text-sm font-medium italic text-brand-100">
+                        "Knowledge is power. Information is liberating. Education is the premise of progress."
+                    </p>
+                    <p id="quoteAuthor" class="text-[11px] font-semibold text-brand-300 mt-1">
+                        — Kofi Annan
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgotModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-panelBg border border-borderBg w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative space-y-5 animate-fade-in">
+            <!-- Modal Close Button -->
+            <button onclick="closeForgotModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-inputBg transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="space-y-1.5">
+                <div class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center border border-brand-500/20 mb-3">
+                    <i data-lucide="key-round" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Reset Your Password</h3>
+                <p class="text-xs text-slate-400">Enter your registered email and we'll send you a password recovery link.</p>
+            </div>
+
+            <form onsubmit="handleForgotSubmit(event)" class="space-y-4">
+                <div class="space-y-1.5">
+                    <label for="forgotEmail" class="block text-xs font-semibold text-slate-300">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                            <i data-lucide="mail" class="w-4 h-4"></i>
+                        </div>
+                        <input type="email" id="forgotEmail" placeholder="student@quiznova.edu" required
+                            class="w-full pl-10 pr-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeForgotModal()" class="px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white bg-inputBg hover:bg-slate-800 border border-borderBg rounded-xl transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow-lg shadow-brand-600/30 transition-all">
+                        Send Reset Link
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & FORM HANDLERS -->
+    <%- include('partials/foot', { page: 'register_login' }) %>

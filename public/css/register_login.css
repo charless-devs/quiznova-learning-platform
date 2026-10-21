@@ -1,0 +1,47 @@
+/* ==========================================================================
+   QuizNova - registration / login portal
+   ========================================================================== */
+
+/* The portal keeps its own dark palette (the light theme lives in
+   /css/base.css and always wins). */
+:root {
+    --qn-page: 9 13 22; /* #090d16 */
+    --qn-card: 17 23 38; /* #111726 */
+    --qn-input: 26 34 52; /* #1a2234 */
+    --qn-border: 35 45 66; /* #232d42 */
+}
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #111726;
+    --qn-scroll-thumb: #232d42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+@keyframes qnPulseGlow {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.animate-glow {
+    animation: qnPulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes qnFloatSlow {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(0deg);
+    }
+}
+
+.animate-float {
+    animation: qnFloatSlow 6s ease-in-out infinite;
+}

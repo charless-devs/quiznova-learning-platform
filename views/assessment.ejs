@@ -1,0 +1,781 @@
+<%- include('partials/head', { title: 'QuizNova - Assessments & Quizzes', page: 'assessment' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col lg:flex-row antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- MOBILE HEADER NAVBAR -->
+    <header class="lg:hidden flex items-center justify-between p-4 bg-cardBg border-b border-borderBg sticky top-0 z-40">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-coral-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+            </div>
+            <span class="text-base font-bold text-white tracking-tight">Quiz<span class="text-brand-400">Nova</span></span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleMobileMenu()" class="p-2 text-slate-400 hover:text-white rounded-lg bg-inputBg border border-borderBg">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-cardBg border-r border-borderBg flex flex-col justify-between p-5 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto">
+        <div>
+            <!-- Sidebar Header / Logo -->
+            <div class="hidden lg:flex items-center gap-3 mb-8 px-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-coral-500 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-white">Quiz<span class="text-brand-400">Nova</span></span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1">
+                <a href="/dashboard" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/classes" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="book-open" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Classes</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-brand-500/20 text-brand-300 rounded-full font-bold">6</span>
+                </a>
+                <a href="/courses" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Courses</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-brand-500/20 text-brand-300 rounded-full font-bold"><%= typeof courseCount !== 'undefined' ? courseCount : 0 %></span>
+                </a>
+                <a href="/materials" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="folder-kanban" class="w-4 h-4"></i>
+                    <span>Materials</span>
+                </a>
+                <a href="/assessment" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 text-white font-semibold text-xs shadow-md shadow-brand-600/20">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="award" class="w-4 h-4"></i>
+                        <span>Assessments</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-white/20 text-white rounded-full font-bold"><%= quizzes.length %></span>
+                </a>
+                <a href="/analytics" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="/community" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span>Community</span>
+                </a>
+                <a href="/messages" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="message-square" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Messages</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-coral-500 text-white rounded-full font-bold">3</span>
+                </a>
+
+                <div class="pt-4 mt-4 border-t border-borderBg/70 space-y-1">
+                    <%- include("partials/admin-link", { user: user }) %>
+                    <a href="/settings" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Profile Widget Sidebar -->
+        <div class="pt-4 border-t border-borderBg/70 flex items-center justify-between">
+            <a href="/profile" class="group flex items-center gap-3 flex-1 min-w-0 rounded-xl px-2 py-1.5 -mx-2 hover:bg-hoverBg transition-colors" title="Open my progress">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="<%= user ? user.name : 'Student' %>" class="w-9 h-9 rounded-xl object-cover ring-2 ring-brand-500/40 group-hover:ring-brand-400 transition-all flex-shrink-0">
+                <div class="min-w-0">
+                    <h4 class="text-xs font-bold text-white truncate group-hover:text-brand-300 transition-colors"><%= user ? user.name : 'Rock Lee' %></h4>
+                    <p class="text-[10px] text-slate-400 truncate group-hover:text-slate-300 transition-colors">View my progress</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 ml-auto text-slate-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0"></i>
+            </a>
+            <button onclick="logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-hoverBg transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <!-- MAIN ASSESSMENTS CONTENT -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+
+        <!-- HEADER & TOOLBAR -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                    <span>Assessments & Quizzes</span>
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-brand-500/20 text-brand-300 rounded-full border border-brand-500/30">Fall Term 2026</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">Track pending midterms, take quick practice quizzes, and view detailed grade feedback.</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors flex-shrink-0" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+                <button onclick="openCreatePracticeModal()" class="px-4 py-2.5 bg-gradient-to-r from-brand-600 to-coral-500 hover:from-brand-500 hover:to-coral-400 text-white font-semibold text-xs rounded-xl shadow-lg shadow-brand-600/25 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Generate Practice Quiz</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- QUICK STATS OVERVIEW STRIP - the numbers come from the database -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-brand-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="check-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Assessments Taken</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= progress ? progress.quizzes : 0 %></span>
+                        <span class="text-[10px] text-slate-500 font-semibold">finished so far</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-emerald-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="trending-up" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Average Score</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= progress ? progress.overall : 0 %>%</span>
+                        <span class="text-[10px] text-emerald-400 font-semibold"><%= progress ? progress.accuracy : 0 %>% correct</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-coral-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-coral-500/20 text-coral-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Not Started</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= typeof openCount !== 'undefined' ? openCount : quizzes.length %></span>
+                        <span class="text-[10px] text-coral-400 font-semibold">waiting for you</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-cyan-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="file-badge-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">In The Library</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= quizzes.length %></span>
+                        <span class="text-[10px] text-slate-400 font-semibold">published quizzes</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SEARCH, TABS & FILTERS BAR -->
+        <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search assessment title..." 
+                        class="w-full pl-10 pr-4 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors">
+                </div>
+
+                <!-- Type Dropdown Filter -->
+                <select id="typeFilter" onchange="applyFilters()" class="w-full sm:w-40 px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-slate-300 focus:outline-none focus:border-brand-500 transition-colors">
+                    <option value="ALL">All Types</option>
+                    <option value="QUIZ">Quizzes</option>
+                    <option value="MIDTERM">Midterm Exams</option>
+                    <option value="PRACTICE">Practice Test</option>
+                    <option value="ASSIGNMENT">Homework Assignment</option>
+                </select>
+
+                <!-- Status Filter Dropdown -->
+                <select id="statusFilter" onchange="applyFilters()" class="w-full sm:w-36 px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-slate-300 focus:outline-none focus:border-brand-500 transition-colors">
+                    <option value="ALL">All Statuses</option>
+                    <option value="UPCOMING">Upcoming</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
+            </div>
+
+            <!-- View Toggle Buttons -->
+            <div class="flex items-center justify-between w-full md:w-auto gap-4">
+                <span id="counterText" class="text-xs font-semibold text-slate-400">Showing 5 assessments</span>
+                
+                <div class="flex items-center bg-inputBg border border-borderBg rounded-xl p-1 gap-1">
+                    <button id="btnGridView" onclick="setViewMode('grid')" class="p-1.5 rounded-lg text-white bg-brand-600 shadow-sm transition-all" title="Card View">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                    </button>
+                    <button id="btnListView" onclick="setViewMode('list')" class="p-1.5 rounded-lg text-slate-400 hover:text-white transition-all" title="Table View">
+                        <i data-lucide="list" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CATEGORY TAB BADGES -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <button onclick="filterByTab('ALL', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white shadow-md shadow-brand-600/20 whitespace-nowrap">
+                All Assessments (5)
+            </button>
+            <button onclick="filterByTab('UPCOMING', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-inputBg text-slate-400 hover:text-white hover:bg-hoverBg border border-borderBg whitespace-nowrap flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-coral-500 animate-urgent"></span>
+                <span>Upcoming (2)</span>
+            </button>
+            <button onclick="filterByTab('IN_PROGRESS', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-inputBg text-slate-400 hover:text-white hover:bg-hoverBg border border-borderBg whitespace-nowrap">
+                In Progress (1)
+            </button>
+            <button onclick="filterByTab('COMPLETED', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-inputBg text-slate-400 hover:text-white hover:bg-hoverBg border border-borderBg whitespace-nowrap">
+                Completed (2)
+            </button>
+        </div>
+
+        <!-- CARDS CONTAINER (GRID OR LIST VIEW) -->
+        <div id="assessmentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+            <%# The assessments the admin published - they come from the database %>
+            <% if (typeof quizzes !== 'undefined' && quizzes && quizzes.length) { %>
+                <% const jsText = function (value) { return String(value === null || value === undefined ? '' : value).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"'); }; %>
+                <% quizzes.forEach(function (quiz) { %>
+                    <% const count = quiz.question_count || quiz.total_questions || 0; %>
+                    <% const marks = count * (quiz.points_per_question || 10); %>
+                    <div class="assessment-card bg-cardBg border border-borderBg hover:border-brand-500/60 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
+                         data-id="<%= quiz.slug %>" data-type="<%= quiz.type %>" data-status="<%= quiz.status %>" data-title="<%= quiz.title %>" data-subject="<%= quiz.subject %>">
+
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-[10px] font-bold uppercase tracking-wider"><%= quiz.subject %></span>
+                                <span class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold uppercase tracking-wider"><%= String(quiz.status).replace('_', ' ') %></span>
+                            </div>
+
+                            <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors leading-snug"><%= quiz.title %></h3>
+                            <p class="text-xs text-slate-400 mt-1"><%= quiz.type %><% if (quiz.published_at) { %> - published <%= String(quiz.published_at).slice(0, 10) %><% } %></p>
+
+                            <div class="my-4 p-3 bg-inputBg/80 rounded-xl grid grid-cols-3 gap-2 text-center border border-borderBg/70 text-xs">
+                                <div>
+                                    <span class="text-[10px] text-slate-500 block font-semibold uppercase">Questions</span>
+                                    <span class="font-bold text-white"><%= count %> Qs</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 block font-semibold uppercase">Time Limit</span>
+                                    <span class="font-bold text-white"><%= quiz.duration_minutes %> Mins</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-slate-500 block font-semibold uppercase">Total Marks</span>
+                                    <span class="font-bold text-white"><%= marks %> Pts</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button onclick="startLiveAssessment('<%= jsText(quiz.title) %>', '<%= jsText(quiz.slug) %>')" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="play" class="w-4 h-4"></i>
+                                <span>Start Assessment</span>
+                            </button>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+
+            <!-- ASSESSMENT CARD 1: CS101 Live Quiz (In Progress) -->
+            <div class="assessment-card bg-cardBg border border-borderBg hover:border-brand-500/60 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
+                 data-id="quiz-101" data-type="QUIZ" data-status="IN_PROGRESS" data-title="Quiz #4: Async JS & Promises" data-subject="Computer Science">
+                
+                <div>
+                    <!-- Top Badge -->
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-[10px] font-bold uppercase tracking-wider">Computer Science</span>
+                        <span class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="play-circle" class="w-3 h-3 text-amber-400"></i>
+                            In Progress (3/10)
+                        </span>
+                    </div>
+
+                    <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors leading-snug">Quiz #4: Async JS & Promises</h3>
+                    <p class="text-xs text-slate-400 mt-1">CS101 - Intro to Web Development</p>
+
+                    <!-- Metadata -->
+                    <div class="my-4 p-3 bg-inputBg/80 rounded-xl grid grid-cols-3 gap-2 text-center border border-borderBg/70 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Questions</span>
+                            <span class="font-bold text-white">10 Qs</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Time Limit</span>
+                            <span class="font-bold text-white">20 Mins</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Total Marks</span>
+                            <span class="font-bold text-white">50 Pts</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Action -->
+                <div class="pt-2">
+                    <button onclick="startLiveAssessment('Quiz #4: Async JS & Promises')" class="w-full py-2.5 bg-gradient-to-r from-brand-600 to-coral-500 hover:from-brand-500 hover:to-coral-400 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        <span>Resume Quiz</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ASSESSMENT CARD 2: MATH Midterm (Upcoming) -->
+            <div class="assessment-card bg-cardBg border border-borderBg hover:border-brand-500/60 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
+                 data-id="exam-202" data-type="MIDTERM" data-status="UPCOMING" data-title="Midterm Exam: Derivatives & Integrals" data-subject="Mathematics">
+                
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-wider">Mathematics</span>
+                        <span class="px-2.5 py-1 rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-urgent"></span>
+                            Due Tomorrow, 11:59 PM
+                        </span>
+                    </div>
+
+                    <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors leading-snug">Midterm Exam: Derivatives & Integrals</h3>
+                    <p class="text-xs text-slate-400 mt-1">MATH202 - Advanced Calculus</p>
+
+                    <div class="my-4 p-3 bg-inputBg/80 rounded-xl grid grid-cols-3 gap-2 text-center border border-borderBg/70 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Questions</span>
+                            <span class="font-bold text-white">25 Qs</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Time Limit</span>
+                            <span class="font-bold text-white">60 Mins</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Total Marks</span>
+                            <span class="font-bold text-white">100 Pts</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="startLiveAssessment('Midterm Exam: Derivatives & Integrals')" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        <span>Start Assessment</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ASSESSMENT CARD 3: Physics Test (Completed - 94%) -->
+            <div class="assessment-card bg-cardBg border border-borderBg hover:border-brand-500/60 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
+                 data-id="phys-301" data-type="QUIZ" data-status="COMPLETED" data-title="Quantum Wave Equations Quiz" data-subject="Science">
+                
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-wider">Science</span>
+                        <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="check-circle" class="w-3 h-3"></i>
+                            94% - Passed
+                        </span>
+                    </div>
+
+                    <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors leading-snug">Quantum Wave Equations Quiz</h3>
+                    <p class="text-xs text-slate-400 mt-1">PHYS301 - Quantum Physics</p>
+
+                    <div class="my-4 p-3 bg-inputBg/80 rounded-xl grid grid-cols-3 gap-2 text-center border border-borderBg/70 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Score</span>
+                            <span class="font-bold text-emerald-400">47 / 50</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Time Taken</span>
+                            <span class="font-bold text-white">14:22 Mins</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Submitted</span>
+                            <span class="font-bold text-white">Oct 18</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="openFeedbackModal('Quantum Wave Equations Quiz', '94%', '47/50')" class="w-full py-2 bg-inputBg hover:bg-hoverBg text-slate-200 hover:text-white font-semibold text-xs rounded-xl border border-borderBg transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="eye" class="w-4 h-4 text-brand-400"></i>
+                        <span>Review Results & Feedback</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ASSESSMENT CARD 4: English Essay (Completed - 88%) -->
+            <div class="assessment-card bg-cardBg border border-borderBg hover:border-brand-500/60 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
+                 data-id="eng-104" data-type="ASSIGNMENT" data-status="COMPLETED" data-title="Literature Essay: Modernism Analysis" data-subject="English">
+                
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wider">English</span>
+                        <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="check-circle" class="w-3 h-3"></i>
+                            88% - Graded
+                        </span>
+                    </div>
+
+                    <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors leading-snug">Literature Essay: Modernism Analysis</h3>
+                    <p class="text-xs text-slate-400 mt-1">ENG104 - Literature & Composition</p>
+
+                    <div class="my-4 p-3 bg-inputBg/80 rounded-xl grid grid-cols-3 gap-2 text-center border border-borderBg/70 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Score</span>
+                            <span class="font-bold text-emerald-400">88 / 100</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Type</span>
+                            <span class="font-bold text-white">Written Essay</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Submitted</span>
+                            <span class="font-bold text-white">Oct 12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="openFeedbackModal('Literature Essay: Modernism Analysis', '88%', '88/100')" class="w-full py-2 bg-inputBg hover:bg-hoverBg text-slate-200 hover:text-white font-semibold text-xs rounded-xl border border-borderBg transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4 text-brand-400"></i>
+                        <span>Read Teacher Feedback</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ASSESSMENT CARD 5: Graphic Design Practice Quiz (Upcoming) -->
+            <div class="assessment-card bg-cardBg border border-borderBg hover:border-brand-500/60 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
+                 data-id="des-102" data-type="PRACTICE" data-status="UPCOMING" data-title="UI Color Theory & Gradients Test" data-subject="Design">
+                
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 rounded-md bg-coral-500/20 text-coral-300 text-[10px] font-bold uppercase tracking-wider">Design</span>
+                        <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/30 text-[10px] font-bold uppercase tracking-wider">
+                            Practice Test
+                        </span>
+                    </div>
+
+                    <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors leading-snug">UI Color Theory & Gradients Test</h3>
+                    <p class="text-xs text-slate-400 mt-1">DES102 - Graphic & UI Design Studio</p>
+
+                    <div class="my-4 p-3 bg-inputBg/80 rounded-xl grid grid-cols-3 gap-2 text-center border border-borderBg/70 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Questions</span>
+                            <span class="font-bold text-white">15 Qs</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Time Limit</span>
+                            <span class="font-bold text-white">15 Mins</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-500 block font-semibold uppercase">Attempts</span>
+                            <span class="font-bold text-white">Unlimited</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="startLiveAssessment('UI Color Theory & Gradients Test')" class="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        <span>Start Practice Test</span>
+                    </button>
+                </div>
+            </div>
+
+            <% } %>
+
+        </div>
+
+    </main>
+
+    <!-- 1. LIVE ASSESSMENT RUNNER MODAL (FULL SCREEN EXAM ENVIRONMENT) -->
+    <div id="liveRunnerModal" class="fixed inset-0 z-50 bg-appBg hidden flex-col">
+        
+        <!-- Runner Header -->
+        <header class="p-4 bg-cardBg border-b border-borderBg flex items-center justify-between px-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h2 id="runnerTitle" class="text-sm sm:text-base font-bold text-white">Quiz #4: Async JS & Promises</h2>
+                    <span id="runnerMeta" class="text-[11px] text-slate-400">Total Questions: 5 • Computer Science CS101</span>
+                </div>
+            </div>
+
+            <!-- Timer Display with Alert styling -->
+            <div id="timerContainer" class="flex items-center gap-2 px-4 py-2 bg-coral-500/10 border border-coral-500/30 rounded-xl text-coral-400 font-mono font-bold text-sm">
+                <i data-lucide="clock" class="w-4 h-4 animate-urgent"></i>
+                <span id="runnerTimer">19:42</span>
+            </div>
+
+            <button onclick="promptExitRunner()" class="p-2 text-slate-400 hover:text-rose-400 rounded-xl bg-inputBg border border-borderBg transition-colors" title="Exit Quiz">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </header>
+
+        <!-- Runner Main Content Grid -->
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+            
+            <!-- Left Side Question Workspace -->
+            <div class="flex-1 p-6 lg:p-10 overflow-y-auto space-y-6 max-w-4xl mx-auto w-full">
+                
+                <!-- Question Number Badge & Flag Button -->
+                <div class="flex items-center justify-between pb-2 border-b border-borderBg">
+                    <span id="qNumberBadge" class="text-xs font-bold text-brand-400 uppercase tracking-wider">Question 1 of 5</span>
+                    <button id="flagBtn" onclick="toggleFlagQuestion()" class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-amber-400 transition-colors">
+                        <i data-lucide="flag" class="w-4 h-4"></i>
+                        <span id="flagText">Flag for Review</span>
+                    </button>
+                </div>
+
+                <!-- Question Prompt -->
+                <div class="space-y-3">
+                    <h3 id="qPrompt" class="text-base sm:text-lg font-extrabold text-white leading-relaxed">
+                        Which of the following methods returns a single Promise that fulfills when all of the promises passed as an iterable have fulfilled?
+                    </h3>
+                    <p class="text-xs text-slate-400">Select the best answer from the choices below:</p>
+                </div>
+
+                <!-- Answer Choices Container -->
+                <div id="optionsContainer" class="space-y-3 pt-2">
+                    <label class="option-card flex items-center p-4 bg-inputBg border border-borderBg hover:border-brand-500 rounded-2xl cursor-pointer transition-all">
+                        <input type="radio" name="quizOption" value="A" class="hidden" onchange="selectOption(this)">
+                        <span class="w-7 h-7 rounded-lg bg-cardBg border border-borderBg text-slate-300 flex items-center justify-center font-bold text-xs mr-3 check-indicator">A</span>
+                        <span class="text-xs sm:text-sm font-medium text-slate-200">Promise.all()</span>
+                    </label>
+
+                    <label class="option-card flex items-center p-4 bg-inputBg border border-borderBg hover:border-brand-500 rounded-2xl cursor-pointer transition-all">
+                        <input type="radio" name="quizOption" value="B" class="hidden" onchange="selectOption(this)">
+                        <span class="w-7 h-7 rounded-lg bg-cardBg border border-borderBg text-slate-300 flex items-center justify-center font-bold text-xs mr-3 check-indicator">B</span>
+                        <span class="text-xs sm:text-sm font-medium text-slate-200">Promise.race()</span>
+                    </label>
+
+                    <label class="option-card flex items-center p-4 bg-inputBg border border-borderBg hover:border-brand-500 rounded-2xl cursor-pointer transition-all">
+                        <input type="radio" name="quizOption" value="C" class="hidden" onchange="selectOption(this)">
+                        <span class="w-7 h-7 rounded-lg bg-cardBg border border-borderBg text-slate-300 flex items-center justify-center font-bold text-xs mr-3 check-indicator">C</span>
+                        <span class="text-xs sm:text-sm font-medium text-slate-200">Promise.any()</span>
+                    </label>
+
+                    <label class="option-card flex items-center p-4 bg-inputBg border border-borderBg hover:border-brand-500 rounded-2xl cursor-pointer transition-all">
+                        <input type="radio" name="quizOption" value="D" class="hidden" onchange="selectOption(this)">
+                        <span class="w-7 h-7 rounded-lg bg-cardBg border border-borderBg text-slate-300 flex items-center justify-center font-bold text-xs mr-3 check-indicator">D</span>
+                        <span class="text-xs sm:text-sm font-medium text-slate-200">Promise.settled()</span>
+                    </label>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center justify-between pt-8 border-t border-borderBg">
+                    <button onclick="prevQuestion()" id="btnPrev" class="px-5 py-2.5 bg-inputBg text-slate-400 hover:text-white rounded-xl border border-borderBg font-semibold text-xs flex items-center gap-2 opacity-50 cursor-not-allowed">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        <span>Previous</span>
+                    </button>
+
+                    <button onclick="nextQuestion()" id="btnNext" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-brand-600/30 flex items-center gap-2">
+                        <span>Next Question</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Right Question Navigator Sidebar -->
+            <aside class="w-full md:w-72 bg-cardBg border-t md:border-t-0 md:border-l border-borderBg p-6 flex flex-col justify-between">
+                <div class="space-y-4">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Question Palette</h4>
+                    
+                    <!-- Question Grid Dots -->
+                    <div id="questionPalette" class="grid grid-cols-5 gap-2.5">
+                        <button onclick="jumpToQuestion(1)" class="q-nav-btn w-10 h-10 rounded-xl bg-brand-600 text-white font-bold text-xs border border-brand-400">1</button>
+                        <button onclick="jumpToQuestion(2)" class="q-nav-btn w-10 h-10 rounded-xl bg-inputBg text-slate-300 font-bold text-xs border border-borderBg hover:border-brand-500">2</button>
+                        <button onclick="jumpToQuestion(3)" class="q-nav-btn w-10 h-10 rounded-xl bg-inputBg text-slate-300 font-bold text-xs border border-borderBg hover:border-brand-500">3</button>
+                        <button onclick="jumpToQuestion(4)" class="q-nav-btn w-10 h-10 rounded-xl bg-inputBg text-slate-300 font-bold text-xs border border-borderBg hover:border-brand-500">4</button>
+                        <button onclick="jumpToQuestion(5)" class="q-nav-btn w-10 h-10 rounded-xl bg-inputBg text-slate-300 font-bold text-xs border border-borderBg hover:border-brand-500">5</button>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="space-y-2 pt-4 border-t border-borderBg text-[11px] text-slate-400">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-brand-600 inline-block"></span>
+                            <span>Current Question</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span>
+                            <span>Answered</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded bg-amber-500 inline-block"></span>
+                            <span>Flagged for Review</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Finish Submit Button -->
+                <div class="pt-6 border-t border-borderBg">
+                    <button onclick="submitAssessment()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                        <span>Submit Final Test</span>
+                    </button>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- 2. REVIEW RESULTS & TEACHER FEEDBACK MODAL -->
+    <div id="feedbackModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6">
+        <div class="bg-cardBg border border-borderBg w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl relative flex flex-col overflow-hidden">
+            
+            <div class="p-6 border-b border-borderBg bg-gradient-to-r from-brand-900/40 via-cardBg to-cardBg flex items-start justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-500/20 px-2.5 py-1 rounded-md border border-emerald-500/30">Graded Result</span>
+                    <h2 id="feedbackTitle" class="text-lg font-bold text-white mt-1">Quantum Wave Equations Quiz</h2>
+                    <p class="text-xs text-slate-400">PHYS301 • Dr. Richard Feynman</p>
+                </div>
+                <button onclick="closeFeedbackModal()" class="p-2 text-slate-400 hover:text-white rounded-xl bg-inputBg border border-borderBg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 text-xs flex-1">
+                
+                <!-- Score Summary Banner -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="p-4 bg-inputBg border border-emerald-500/30 rounded-2xl text-center space-y-1">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Total Score</span>
+                        <p id="feedbackScore" class="text-2xl font-extrabold text-emerald-400">94%</p>
+                    </div>
+                    <div class="p-4 bg-inputBg border border-borderBg rounded-2xl text-center space-y-1">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Points Earned</span>
+                        <p id="feedbackPoints" class="text-2xl font-extrabold text-white">47 / 50</p>
+                    </div>
+                    <div class="p-4 bg-inputBg border border-borderBg rounded-2xl text-center space-y-1">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Time Spent</span>
+                        <p class="text-2xl font-extrabold text-brand-400">14m 22s</p>
+                    </div>
+                </div>
+
+                <!-- Teacher Feedback Comments -->
+                <div class="p-4 bg-brand-500/10 border border-brand-500/30 rounded-2xl space-y-2">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="message-square-quote" class="w-4 h-4 text-brand-400"></i>
+                        <span class="font-bold text-white">Instructor Notes:</span>
+                    </div>
+                    <p class="text-slate-300 leading-relaxed">
+                        "Outstanding work, Rock! Your understanding of Schrödinger's time-dependent wave equation is thorough. Pay extra attention to normalization factors on Question #4."
+                    </p>
+                </div>
+
+                <!-- Question Breakdown List -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-white text-sm">Question Breakdown</h4>
+                    
+                    <div class="p-3 bg-inputBg border border-emerald-500/30 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                            <div>
+                                <h5 class="font-bold text-white">1. Wavefunction Normalization Criteria</h5>
+                                <span class="text-[10px] text-slate-400">Your Answer: Choice A (Correct)</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-emerald-400">+10 Pts</span>
+                    </div>
+
+                    <div class="p-3 bg-inputBg border border-rose-500/30 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="x" class="w-4 h-4 text-rose-400 shrink-0"></i>
+                            <div>
+                                <h5 class="font-bold text-white">4. Infinite Square Well Potential Energy</h5>
+                                <span class="text-[10px] text-rose-300">Your Answer: Choice C • Correct: Choice B</span>
+                            </div>
+                        </div>
+                        <span class="font-bold text-rose-400">0 / 3 Pts</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-4 border-t border-borderBg bg-cardBg flex justify-end">
+                <button onclick="closeFeedbackModal()" class="px-5 py-2 bg-inputBg hover:bg-hoverBg text-slate-200 border border-borderBg rounded-xl font-semibold">
+                    Close Review
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. GENERATE PRACTICE QUIZ MODAL -->
+    <div id="practiceModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardBg border border-borderBg w-full max-w-md rounded-2xl p-6 shadow-2xl relative space-y-4">
+            <button onclick="closeCreatePracticeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="space-y-1">
+                <div class="w-10 h-10 rounded-xl bg-coral-500/20 text-coral-400 flex items-center justify-center mb-2">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Generate AI Practice Test</h3>
+                <p class="text-xs text-slate-400">Customize a practice quiz tailored to your upcoming exam topics.</p>
+            </div>
+
+            <form onsubmit="handleGeneratePractice(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1" for="practiceSubject">Subject Area</label>
+                    <select id="practiceSubject" class="w-full px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-white focus:outline-none focus:border-brand-500">
+                        <% subjects.forEach(function (subject) { %>
+                            <option value="<%= subject.name %>"><%= subject.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">Questions</label>
+                        <select class="w-full px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-white focus:outline-none focus:border-brand-500">
+                            <option>10 Questions</option>
+                            <option>15 Questions</option>
+                            <option>25 Questions</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-300 mb-1">Difficulty</label>
+                        <select class="w-full px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-white focus:outline-none focus:border-brand-500">
+                            <option>Medium</option>
+                            <option>Hard</option>
+                            <option>Expert</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeCreatePracticeModal()" class="px-4 py-2 font-semibold text-slate-300 bg-inputBg rounded-xl border border-borderBg">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 font-bold text-white bg-gradient-to-r from-brand-600 to-coral-500 rounded-xl shadow-lg shadow-brand-600/25">
+                        Start Practice Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <%- include('partials/foot', { page: 'assessment' }) %>

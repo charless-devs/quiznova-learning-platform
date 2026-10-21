@@ -1,0 +1,336 @@
+<%- include('partials/head', { title: 'QuizNova - My Progress', page: 'profile' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-appBg/85 border-b border-borderBg/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+
+            <!-- Student -->
+            <div class="flex items-center gap-3">
+                <a href="<%= user && user.role === 'admin' ? '/admin' : '/dashboard' %>" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="<%= user && user.role === 'admin' ? 'Back to the admin portal' : 'Back to the dashboard' %>">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </a>
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-600 to-coral-500 flex items-center justify-center shadow-lg shadow-brand-500/25 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="<%= user ? user.name : 'Student' %>" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-base sm:text-lg font-extrabold text-white truncate"><%= user ? user.name : 'Student' %></h1>
+                    <p class="text-[11px] text-slate-400 truncate"><%= user ? (user.email || '') : 'View your learning progress' %></p>
+                </div>
+            </div>
+
+            <!-- Stats chips -->
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <!-- Level -->
+                <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-cardBg border border-borderBg">
+                    <div class="w-7 h-7 rounded-lg bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                    </div>
+                    <div class="leading-tight">
+                        <p class="text-[10px] text-slate-400">Level</p>
+                        <p id="statLevel" class="text-sm font-extrabold text-white"><%= progress.level %></p>
+                    </div>
+                </div>
+
+                <!-- Points -->
+                <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-cardBg border border-borderBg">
+                    <div class="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="star" class="w-4 h-4"></i>
+                    </div>
+                    <div class="leading-tight">
+                        <p class="text-[10px] text-slate-400">Points</p>
+                        <p id="statPoints" class="text-sm font-extrabold text-white"><%= progress.points.toLocaleString('en-US') %></p>
+                    </div>
+                </div>
+
+                <!-- Streak -->
+                <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-cardBg border border-borderBg">
+                    <div class="w-7 h-7 rounded-lg bg-coral-500/15 text-coral-400 flex items-center justify-center">
+                        <i data-lucide="flame" class="w-4 h-4"></i>
+                    </div>
+                    <div class="leading-tight">
+                        <p class="text-[10px] text-slate-400">Streak</p>
+                        <p id="statStreak" class="text-sm font-extrabold text-white"><%= progress.streak %> days</p>
+                    </div>
+                </div>
+
+                <!-- Theme -->
+                <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-cardBg border border-borderBg text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <span class="qn-live-dot" data-live-indicator></span>
+                    <span>Live</span>
+                </span>
+
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-cardBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+        <!-- Empty state -->
+        <% if (!progress.hasData) { %>
+            <section class="qn-card p-10 text-center space-y-4">
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="rocket" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-extrabold text-white">No attempts yet</h2>
+                <p class="text-sm text-slate-400 max-w-md mx-auto">
+                    Take your first quiz and this page fills up with your subject mastery, your
+                    strongest topics and the ones you should revise.
+                </p>
+                <a href="/assessment" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg shadow-brand-600/25 transition-all">
+                    <i data-lucide="play" class="w-4 h-4"></i>
+                    <span>Take a quiz</span>
+                </a>
+            </section>
+        <% } %>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- RADAR CHART -->
+            <section class="lg:col-span-2 qn-card p-5 sm:p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h2 class="text-lg font-extrabold text-white tracking-tight">Subject mastery</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">How strong you are in every subject</p>
+                    </div>
+                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-brand-500/15 text-brand-400 border border-brand-500/30">
+                        <span id="statOverall"><%= progress.overall %></span>% overall
+                    </span>
+                </div>
+
+                <div class="qn-radar-wrap relative">
+                    <svg viewBox="0 0 <%= progress.radar.width %> <%= progress.radar.height %>" class="w-full h-auto" role="img" aria-label="Subject mastery chart">
+                        <defs>
+                            <radialGradient id="qnRadarFill" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.55"></stop>
+                                <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.22"></stop>
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Grid rings -->
+                        <g class="qn-radar-grid">
+                            <% progress.radar.rings.forEach(function (ring) { %>
+                                <polygon points="<%= ring.points.map(function (point) { return point.x + ',' + point.y; }).join(' ') %>"></polygon>
+                            <% }); %>
+                        </g>
+
+                        <!-- Spokes -->
+                        <g class="qn-radar-spokes">
+                            <% progress.radar.rings[progress.radar.rings.length - 1].points.forEach(function (point) { %>
+                                <line x1="<%= progress.radar.cx %>" y1="<%= progress.radar.cy %>" x2="<%= point.x %>" y2="<%= point.y %>"></line>
+                            <% }); %>
+                        </g>
+
+                        <!-- The student's shape -->
+                        <% if (progress.hasData) { %>
+                            <polygon class="qn-radar-area" points="<%= progress.radar.polygonPoints %>"></polygon>
+                            <% progress.radar.polygon.forEach(function (point, index) { %>
+                                <circle class="qn-radar-dot" cx="<%= point.x %>" cy="<%= point.y %>" r="6" style="fill: <%= progress.subjects[index].color %>"></circle>
+                            <% }); %>
+                        <% } %>
+
+                        <!-- Centre -->
+                        <circle class="qn-radar-hub" cx="<%= progress.radar.cx %>" cy="<%= progress.radar.cy %>" r="3"></circle>
+                    </svg>
+
+                    <!-- Subject bubbles -->
+                    <% progress.subjects.forEach(function (subject, index) { %>
+                        <div class="qn-radar-label" style="left: <%= progress.radar.labels[index].left %>%; top: <%= progress.radar.labels[index].top %>%;">
+                            <div class="qn-radar-label__icon" style="background-color: <%= subject.color %>;">
+                                <i data-lucide="<%= subject.icon %>" class="w-4 h-4"></i>
+                            </div>
+                            <div class="qn-radar-label__text">
+                                <span class="qn-radar-label__name"><%= subject.name %></span>
+                                <span class="qn-radar-label__score" data-subject-score style="color: <%= subject.color %>;"><%= subject.score %>%</span>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <!-- Legend -->
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-4 border-t border-borderBg/60 text-[11px] text-slate-400">
+                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>90 - 100</span>
+                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>70 - 89</span>
+                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>50 - 69</span>
+                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>Below 50</span>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN -->
+            <div class="space-y-6">
+
+                <!-- Mastery summary + strengths -->
+                <section class="qn-card p-5 sm:p-6 space-y-5">
+                    <% const focus = progress.subjects[0]; %>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl flex items-center justify-center" style="background-color: <%= focus ? focus.soft : '#ede9fe' %>; color: <%= focus ? focus.color : '#7c3aed' %>;">
+                            <i data-lucide="<%= focus ? focus.icon : 'target' %>" class="w-6 h-6"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-white truncate"><%= focus ? focus.name : 'Start a quiz' %></p>
+                            <p class="text-2xl font-extrabold tracking-tight" style="color: <%= focus ? focus.color : '#7c3aed' %>;"><%= focus ? focus.score : 0 %>%</p>
+                        </div>
+                        <span class="ml-auto self-start flex items-center gap-1 text-xs font-bold text-emerald-500">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            <%= focus ? focus.attempts : 0 %>
+                        </span>
+                    </div>
+
+                    <!-- Top strengths -->
+                    <div class="space-y-3">
+                        <h3 class="flex items-center gap-2 text-sm font-extrabold text-white">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>
+                            Top Strengths
+                        </h3>
+                        <% if (progress.strengths.length) { %>
+                            <ul class="space-y-2.5" id="strengthsList">
+                                <% progress.strengths.forEach(function (topic) { %>
+                                    <li>
+                                        <div class="flex items-center justify-between text-xs mb-1.5">
+                                            <span class="text-slate-300 font-medium truncate"><%= topic.label %></span>
+                                            <span class="font-bold text-emerald-500"><%= topic.value %>%</span>
+                                        </div>
+                                        <div class="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                                            <div class="h-full rounded-full bg-emerald-500" style="width: <%= topic.value %>%"></div>
+                                        </div>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-xs text-slate-400">Finish a quiz to see your strongest topics.</p>
+                        <% } %>
+                    </div>
+
+                    <!-- Needs attention -->
+                    <div class="space-y-3 pt-4 border-t border-borderBg/60">
+                        <h3 class="flex items-center gap-2 text-sm font-extrabold text-white">
+                            <i data-lucide="target" class="w-4 h-4 text-amber-500"></i>
+                            Needs Attention
+                        </h3>
+                        <% if (progress.attention.length) { %>
+                            <ul class="space-y-2.5" id="attentionList">
+                                <% progress.attention.forEach(function (topic) { %>
+                                    <li>
+                                        <div class="flex items-center justify-between text-xs mb-1.5">
+                                            <span class="text-slate-300 font-medium truncate"><%= topic.label %></span>
+                                            <span class="font-bold text-amber-500"><%= topic.value %>%</span>
+                                        </div>
+                                        <div class="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                                            <div class="h-full rounded-full bg-amber-500" style="width: <%= topic.value %>%"></div>
+                                        </div>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-xs text-slate-400">Nothing to revise yet - nice work!</p>
+                        <% } %>
+                    </div>
+
+                    <a href="/assessment" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white text-sm font-bold shadow-lg shadow-brand-600/25 transition-all">
+                        <span>View chapters</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </a>
+                </section>
+
+                <!-- Totals -->
+                <section class="qn-card p-5 grid grid-cols-3 divide-x divide-borderBg/60">
+                    <div class="text-center px-2">
+                        <div class="flex items-center justify-center gap-1.5 text-brand-400">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Quizzes</span>
+                        </div>
+                        <p id="statQuizzes" class="text-xl font-extrabold text-white mt-1"><%= progress.quizzes %></p>
+                    </div>
+                    <div class="text-center px-2">
+                        <div class="flex items-center justify-center gap-1.5 text-brand-400">
+                            <i data-lucide="clock" class="w-4 h-4"></i>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Time</span>
+                        </div>
+                        <p id="statTime" class="text-xl font-extrabold text-white mt-1"><%= progress.hours %>h <%= progress.minutes %>m</p>
+                    </div>
+                    <div class="text-center px-2">
+                        <div class="flex items-center justify-center gap-1.5 text-brand-400">
+                            <i data-lucide="target" class="w-4 h-4"></i>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Accuracy</span>
+                        </div>
+                        <p id="statAccuracy" class="text-xl font-extrabold text-white mt-1"><%= progress.accuracy %>%</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- BOTTOM ROW -->
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+            <!-- Call to action -->
+            <section class="lg:col-span-3 qn-card p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-6">
+                <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-brand-500/20 to-indigo-500/20 border border-brand-500/30 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="bot" class="w-11 h-11 text-brand-400"></i>
+                </div>
+                <div class="flex-1 text-center sm:text-left space-y-2">
+                    <h2 class="text-lg font-extrabold text-white">Keep your mastery map growing</h2>
+                    <p class="text-sm text-slate-400">Every quiz you finish adds a new point to your subject map.</p>
+                </div>
+                <a href="/assessment" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold text-sm shadow-lg shadow-brand-600/25 transition-all hover:-translate-y-0.5 flex-shrink-0">
+                    <span>Take quiz</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </a>
+            </section>
+
+            <!-- 7 day trend -->
+            <section class="lg:col-span-2 qn-card p-5 sm:p-6">
+                <h2 class="text-sm font-extrabold text-white mb-3">Last 7 days trend</h2>
+                <svg viewBox="0 0 <%= progress.trend.width %> <%= progress.trend.height %>" class="w-full h-auto" role="img" aria-label="Score trend of the last 7 days">
+                    <defs>
+                        <linearGradient id="qnTrendFill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.35"></stop>
+                            <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"></stop>
+                        </linearGradient>
+                    </defs>
+
+                    <line class="qn-trend-base" x1="<%= progress.trend.padding %>" y1="<%= progress.trend.base %>" x2="<%= progress.trend.width - progress.trend.padding %>" y2="<%= progress.trend.base %>"></line>
+
+                    <% if (progress.hasData) { %>
+                        <path d="<%= progress.trend.area %>" fill="url(#qnTrendFill)"></path>
+                        <path class="qn-trend-line" d="<%= progress.trend.line %>"></path>
+                        <% progress.trend.points.forEach(function (point) { %>
+                            <circle class="qn-trend-dot" cx="<%= point.x %>" cy="<%= point.y %>" r="4"></circle>
+                        <% }); %>
+                    <% } %>
+                </svg>
+
+                <div class="flex items-center justify-between px-2 -mt-1">
+                    <% progress.trend.points.forEach(function (point) { %>
+                        <span class="text-[10px] font-semibold text-slate-400"><%= point.label %></span>
+                    <% }); %>
+                </div>
+            </section>
+        </div>
+
+        <!-- Recent attempts -->
+        <% if (progress.recent.length) { %>
+            <section class="qn-card p-5 sm:p-6">
+                <h2 class="text-sm font-extrabold text-white mb-4">Recent attempts</h2>
+                <div class="space-y-2">
+                    <% progress.recent.forEach(function (item) { %>
+                        <a href="/assessment" class="flex items-center justify-between gap-4 px-3 py-2.5 rounded-xl hover:bg-hoverBg transition-colors">
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-white truncate"><%= item.title %></p>
+                                <p class="text-[10px] text-slate-400"><%= item.subject %> &middot; <%= item.date %></p>
+                            </div>
+                            <span class="text-sm font-extrabold <%= item.score >= 70 ? 'text-emerald-500' : 'text-amber-500' %>"><%= item.score %>%</span>
+                        </a>
+                    <% }); %>
+                </div>
+            </section>
+        <% } %>
+    </main>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'profile' }) %>

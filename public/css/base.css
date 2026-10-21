@@ -1,0 +1,461 @@
+/* ==========================================================================
+   QuizNova - base styles
+   Shared by every page. Page specific rules live in /css/<page>.css
+   ========================================================================== */
+
+:root {
+    color-scheme: dark;
+    --qn-scroll-size: 8px;
+    --qn-scroll-track: #0b0f19;
+    --qn-scroll-thumb: #1f293d;
+    --qn-scroll-thumb-hover: #374151;
+
+    --qn-toast-border: rgba(139, 92, 246, 0.4);
+    --qn-toast-bg: rgba(76, 29, 149, 0.9);
+    --qn-toast-color: #ede9fe;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* ------------------------------------------------------------------ */
+/* Theme tokens (dark <-> light)                                       */
+/* ------------------------------------------------------------------ */
+
+/* Every surface colour of the app is a CSS variable, so the theme toggle
+   can repaint the whole site. The variables hold the red, green and blue
+   channels, which is what lets Tailwind keep its opacity modifiers
+   (bg-cardBg/60) working in both themes.
+
+   A page that wants its own dark palette overrides these in its own
+   stylesheet - the light values below always win. */
+:root {
+    --qn-page: 15 17 26; /* the page background (appBg) */
+    --qn-card: 23 26 41; /* cards and panels (cardBg) */
+    --qn-border: 38 44 66; /* borders (borderBg) */
+    --qn-hover: 33 38 58; /* hover surfaces (hoverBg) */
+    --qn-input: 30 35 53; /* inputs and chips (inputBg) */
+    --qn-nav: 24 29 49; /* sidebars (navBg / navCardBg) */
+    --qn-code: 13 17 28; /* code blocks (codeBg) */
+}
+
+html.light {
+    color-scheme: light;
+
+    --qn-page: 241 245 249;
+    --qn-card: 255 255 255;
+    --qn-border: 226 232 240;
+    --qn-hover: 241 245 249;
+    --qn-input: 248 250 252;
+    --qn-nav: 255 255 255;
+    --qn-code: 15 23 42;
+
+    --qn-scroll-track: #e2e8f0;
+    --qn-scroll-thumb: #cbd5e1;
+    --qn-scroll-thumb-hover: #94a3b8;
+}
+
+/* ------------------------------------------------------------------ */
+/* Light mode                                                          */
+/* ------------------------------------------------------------------ */
+
+/* Tailwind compiles the slate and brand palette as literal colours, so
+   the light theme swaps them for their readable counterparts. */
+
+/* Text ---------------------------------------------------------------- */
+html.light .text-white,
+html.light .hover\:text-white,
+html.light .group-hover\:text-white {
+    color: #0f172a;
+}
+
+html.light .text-slate-100 {
+    color: #0f172a;
+}
+
+html.light .text-slate-200 {
+    color: #1e293b;
+}
+
+html.light .text-slate-300 {
+    color: #334155;
+}
+
+html.light .text-slate-400 {
+    color: #475569;
+}
+
+html.light .text-slate-500 {
+    color: #64748b;
+}
+
+html.light .hover\:text-slate-300,
+html.light .group-hover\:text-slate-300 {
+    color: #1e293b;
+}
+
+html.light .placeholder-slate-500 {
+    color: #94a3b8;
+}
+
+/* Brand ---------------------------------------------------------------- */
+html.light .text-brand-100 {
+    color: #5b21b6;
+}
+
+html.light .text-brand-300,
+html.light .hover\:text-brand-300,
+html.light .group-hover\:text-brand-300 {
+    color: #6d28d9;
+}
+
+html.light .text-brand-400,
+html.light .group-hover\:text-brand-400 {
+    color: #7c3aed;
+}
+
+html.light .text-brand-500 {
+    color: #7c3aed;
+}
+
+/* Accents -------------------------------------------------------------- */
+html.light .text-coral-300 {
+    color: #be185d;
+}
+
+html.light .text-coral-400 {
+    color: #db2777;
+}
+
+html.light .text-coral-500 {
+    color: #db2777;
+}
+
+html.light .text-cyan-300 {
+    color: #0e7490;
+}
+
+html.light .text-cyan-400 {
+    color: #0891b2;
+}
+
+html.light .text-emerald-300 {
+    color: #047857;
+}
+
+html.light .text-emerald-400,
+html.light .text-emerald-500 {
+    color: #059669;
+}
+
+html.light .text-amber-300 {
+    color: #92400e;
+}
+
+html.light .text-amber-400,
+html.light .hover\:text-amber-400 {
+    color: #b45309;
+}
+
+html.light .text-rose-300 {
+    color: #be123c;
+}
+
+html.light .text-rose-400,
+html.light .hover\:text-rose-400 {
+    color: #e11d48;
+}
+
+html.light .hover\:text-rose-300 {
+    color: #be123c;
+}
+
+html.light .text-orange-400 {
+    color: #c2410c;
+}
+
+html.light .text-pink-400 {
+    color: #db2777;
+}
+
+html.light .text-purple-300 {
+    color: #7e22ce;
+}
+
+html.light .text-purple-400 {
+    color: #9333ea;
+}
+
+html.light .text-indigo-400 {
+    color: #4f46e5;
+}
+
+html.light .text-blue-400 {
+    color: #2563eb;
+}
+
+/* Surfaces ------------------------------------------------------------- */
+html.light .bg-slate-700 {
+    background-color: #e2e8f0;
+}
+
+/* The quiz page hard codes two header shades. */
+html.light .bg-\[\#101424\] {
+    background-color: rgb(var(--qn-card));
+}
+
+html.light .bg-\[\#14192b\] {
+    background-color: rgb(var(--qn-hover));
+}
+
+html.light .bg-slate-700\/40 {
+    background-color: rgb(226 232 240 / 0.4);
+}
+
+html.light .bg-slate-800 {
+    background-color: #e2e8f0;
+}
+
+html.light .bg-slate-900\/60 {
+    background-color: rgb(241 245 249 / 0.9);
+}
+
+html.light .hover\:bg-slate-700 {
+    background-color: #e2e8f0;
+}
+
+html.light .hover\:bg-slate-800,
+html.light .hover\:bg-slate-800\/80 {
+    background-color: #f1f5f9;
+}
+
+html.light .bg-white {
+    background-color: #e2e8f0;
+}
+
+/* Dark tinted "active" surfaces become soft tints. */
+html.light .bg-brand-900\/40 {
+    background-color: rgb(245 243 255 / 0.9);
+}
+
+html.light .to-indigo-900\/40 {
+    background-color: rgb(238 242 255 / 0.9);
+}
+
+html.light .bg-indigo-950\/40 {
+    background-color: rgb(238 242 255 / 0.9);
+}
+
+html.light .bg-pink-950\/40 {
+    background-color: rgb(253 242 248 / 0.9);
+}
+
+html.light .bg-emerald-950\/40 {
+    background-color: rgb(236 253 245 / 0.9);
+}
+
+/* Borders -------------------------------------------------------------- */
+html.light .border-slate-600,
+html.light .hover\:border-slate-600 {
+    border-color: #94a3b8;
+}
+
+html.light .border-emerald-800\/40 {
+    border-color: rgb(4 120 87 / 0.4);
+}
+
+html.light .border-indigo-800\/40 {
+    border-color: rgb(79 70 229 / 0.4);
+}
+
+html.light .border-pink-800\/40 {
+    border-color: rgb(219 39 119 / 0.4);
+}
+
+/* Shadows -------------------------------------------------------------- */
+html.light .shadow-sm {
+    box-shadow: 0 1px 2px 0 rgb(15 23 42 / 0.08);
+}
+
+html.light .shadow-md {
+    box-shadow: 0 4px 6px -1px rgb(15 23 42 / 0.1), 0 2px 4px -2px rgb(15 23 42 / 0.1);
+}
+
+html.light .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgb(15 23 42 / 0.1), 0 4px 6px -4px rgb(15 23 42 / 0.1);
+}
+
+html.light .shadow-xl {
+    box-shadow: 0 20px 25px -5px rgb(15 23 42 / 0.12);
+}
+
+html.light .shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgb(15 23 42 / 0.15);
+}
+
+/* The gradient headline needs a solid colour to stay readable. */
+html.light .bg-clip-text {
+    color: #6d28d9;
+    background-image: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Custom subtle scrollbar                                            */
+/* ------------------------------------------------------------------ */
+
+::-webkit-scrollbar {
+    width: var(--qn-scroll-size);
+    height: var(--qn-scroll-size);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--qn-scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--qn-scroll-thumb);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--qn-scroll-thumb-hover);
+}
+
+::selection {
+    background: rgba(139, 92, 246, 0.35);
+    color: #fff;
+}
+
+/* Shared keyframes --------------------------------------------------- */
+@keyframes qnFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes qnFloatSlow {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(1deg);
+    }
+}
+
+.animate-fade-in {
+    animation: qnFadeIn 0.35s ease-out forwards;
+}
+
+.animate-float {
+    animation: qnFloatSlow 5s ease-in-out infinite;
+}
+
+/* Toast notifications (built by /js/shared.js) ------------------------ */
+.qn-toast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--qn-toast-border);
+    background: var(--qn-toast-bg);
+    color: var(--qn-toast-color);
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.35;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+    animation: qnFadeIn 0.25s ease-out forwards;
+}
+
+.qn-toast[data-type='error'] {
+    --qn-toast-border: rgba(244, 63, 94, 0.45);
+    --qn-toast-bg: rgba(76, 5, 25, 0.92);
+    --qn-toast-color: #fecdd3;
+}
+
+.qn-toast__icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    color: #a78bfa;
+}
+
+.qn-toast[data-type='error'] .qn-toast__icon {
+    color: #fb7185;
+}
+
+.qn-toast__close {
+    padding: 0.125rem;
+    color: #94a3b8;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.qn-toast__close:hover {
+    color: #fff;
+}
+
+.qn-toast__close svg {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+/* Utility ------------------------------------------------------------- */
+.qn-hidden {
+    display: none !important;
+}
+
+/* Live indicator (the realtime stream) -------------------------------- */
+.qn-live-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: #64748b;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qn-live-dot.is-live {
+    background-color: #10b981;
+    box-shadow: 0 0 0 3px rgb(16 185 129 / 0.2);
+    animation: qnLivePulse 2s ease-in-out infinite;
+}
+
+@keyframes qnLivePulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.45;
+    }
+}
+
+.qn-spin {
+    animation: qnSpin 0.8s linear infinite;
+}
+
+@keyframes qnSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}

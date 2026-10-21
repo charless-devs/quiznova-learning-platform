@@ -1,0 +1,137 @@
+/* ==========================================================================
+   QuizNova - messages
+   ========================================================================== */
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #262c42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+.qn-card {
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    box-shadow: var(--qn-card-shadow);
+}
+
+/* Conversation list --------------------------------------------------- */
+.qn-conversation {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgb(var(--qn-border) / 0.6);
+    transition: background-color 0.15s ease;
+}
+
+.qn-conversation:hover {
+    background-color: rgb(var(--qn-hover));
+}
+
+.qn-conversation.is-active {
+    background-color: rgb(124 58 237 / 0.12);
+    box-shadow: inset 3px 0 0 #7c3aed;
+}
+
+.qn-conversation.is-hidden {
+    display: none;
+}
+
+.qn-avatar {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.qn-badge {
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.375rem;
+    border-radius: 9999px;
+    background-color: #7c3aed;
+    color: #fff;
+    font-size: 0.625rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bubbles ------------------------------------------------------------- */
+.qn-bubble {
+    max-width: 75%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    position: relative;
+}
+
+.qn-bubble p {
+    margin: 0;
+}
+
+.qn-bubble__time {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.625rem;
+    opacity: 0.7;
+}
+
+.qn-bubble.is-incoming {
+    background-color: rgb(var(--qn-input));
+    border: 1px solid rgb(var(--qn-border));
+    border-bottom-left-radius: 0.25rem;
+    color: #e2e8f0;
+}
+
+.qn-bubble.is-outgoing {
+    margin-left: auto;
+    background-color: #7c3aed;
+    border-bottom-right-radius: 0.25rem;
+    color: #fff;
+}
+
+/* In the light theme the bubble follows the page - the text has to be
+   readable on a light surface. */
+html.light .qn-bubble.is-incoming {
+    background-color: #fff;
+    color: #0f172a;
+}
+
+html.light .qn-bubble.is-incoming .qn-bubble__time {
+    color: #64748b;
+}
+
+html.light .qn-conversation .qn-avatar {
+    color: #fff;
+}
+
+html.light .qn-badge {
+    background-color: #7c3aed;
+    color: #fff;
+}
+
+html.light #threadName {
+    color: #0f172a;
+}
+
+html.light #threadRole {
+    color: #64748b;
+}
+
+@media (max-width: 640px) {
+    .qn-bubble {
+        max-width: 88%;
+    }
+}

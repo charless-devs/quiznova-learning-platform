@@ -1,0 +1,241 @@
+<%- include('partials/head', { title: 'QuizNova - Settings', page: 'settings' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-appBg/85 border-b border-borderBg/70">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="<%= user && user.role === 'admin' ? '/admin' : '/dashboard' %>" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="<%= user && user.role === 'admin' ? 'Back to the admin portal' : 'Back to the dashboard' %>">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-white tracking-tight">Settings</h1>
+                    <p class="text-[11px] text-slate-400">Your account, your security and your preferences</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+        <!-- The account -->
+        <section class="qn-card p-5 sm:p-6 space-y-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-extrabold text-white">Your profile</h2>
+                    <p class="text-[11px] text-slate-400">How the other students see you</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="settingName">Display name</label>
+                    <input type="text" id="settingName" value="<%= user ? user.name : '' %>"
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="settingSubject">Primary subject</label>
+                    <select id="settingSubject" class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white focus:outline-none focus:border-brand-500 transition-all cursor-pointer">
+                        <option value="">No subject yet</option>
+                        <% subjects.forEach(function (subject) { %>
+                            <option value="<%= subject.name %>" <%= user && user.subject === subject.name ? 'selected' : '' %>><%= subject.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="settingEmail">Email</label>
+                    <input type="email" id="settingEmail" value="<%= user ? user.email : '' %>" disabled
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-slate-500 cursor-not-allowed">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="settingUsername">Username</label>
+                    <input type="text" id="settingUsername" value="<%= user ? user.username : '' %>" disabled
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-slate-500 cursor-not-allowed">
+                </div>
+            </div>
+
+            <p id="profileError" class="hidden text-xs text-rose-400"></p>
+
+            <div class="flex justify-end">
+                <button id="saveProfile" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-600/25 transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save the profile</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- The preferences -->
+        <section class="qn-card p-5 sm:p-6 space-y-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center">
+                    <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-extrabold text-white">Preferences</h2>
+                    <p class="text-[11px] text-slate-400">How QuizNova behaves for you</p>
+                </div>
+            </div>
+
+            <!-- Theme -->
+            <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-white">Theme</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Dark is easier at night, light in the day.</p>
+                </div>
+                <div class="flex items-center gap-1 bg-inputBg border border-borderBg px-2 py-1 rounded-xl flex-shrink-0">
+                    <button class="qn-theme-option <%= preferences.theme !== 'light' ? 'is-active' : '' %>" data-theme="dark">Dark</button>
+                    <button class="qn-theme-option <%= preferences.theme === 'light' ? 'is-active' : '' %>" data-theme="light">Light</button>
+                </div>
+            </div>
+
+            <!-- Switches -->
+            <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-white">Email notifications</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">A mail when a teacher answers your message.</p>
+                </div>
+                <button class="qn-switch <%= Number(preferences.email_notifications) === 1 ? 'is-on' : '' %>" data-preference="email_notifications" aria-pressed="<%= Number(preferences.email_notifications) === 1 %>">
+                    <span class="qn-switch__knob"></span>
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-white">Quiz sounds</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">A sound when the timer runs out.</p>
+                </div>
+                <button class="qn-switch <%= Number(preferences.quiz_sound) === 1 ? 'is-on' : '' %>" data-preference="quiz_sound" aria-pressed="<%= Number(preferences.quiz_sound) === 1 %>">
+                    <span class="qn-switch__knob"></span>
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-white">Show my progress</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Your mastery map is visible to your teachers.</p>
+                </div>
+                <button class="qn-switch <%= Number(preferences.show_progress) === 1 ? 'is-on' : '' %>" data-preference="show_progress" aria-pressed="<%= Number(preferences.show_progress) === 1 %>">
+                    <span class="qn-switch__knob"></span>
+                </button>
+            </div>
+
+            <!-- Daily goal -->
+            <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50 space-y-2">
+                <label for="settingDailyGoal" class="block">
+                    <p class="text-xs font-bold text-white">Daily goal</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">How many quizzes you want to finish every day.</p>
+                </label>
+                <div class="flex items-center gap-3">
+                    <input type="range" id="settingDailyGoal" min="1" max="20" step="1" value="<%= preferences.daily_goal %>" class="qn-range flex-1">
+                    <span id="dailyGoalValue" class="w-16 text-right text-sm font-extrabold text-white"><%= preferences.daily_goal %> / day</span>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button id="savePreferences" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-600/25 transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Save the preferences</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- The security -->
+        <section class="qn-card p-5 sm:p-6 space-y-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center">
+                    <i data-lucide="lock" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-extrabold text-white">Password</h2>
+                    <p class="text-[11px] text-slate-400">Keep your account safe</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="currentPassword">Current password</label>
+                    <input type="password" id="currentPassword" autocomplete="current-password"
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="newPassword">New password</label>
+                    <input type="password" id="newPassword" autocomplete="new-password" placeholder="At least 6 characters"
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                </div>
+            </div>
+
+            <p id="passwordError" class="hidden text-xs text-rose-400"></p>
+
+            <div class="flex justify-end">
+                <button id="changePassword" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold shadow-lg shadow-brand-600/25 transition-all">
+                    <i data-lucide="key-round" class="w-4 h-4"></i>
+                    <span>Change the password</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- The account -->
+        <section class="qn-card p-5 sm:p-6 space-y-5">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-extrabold text-white">Your account</h2>
+                    <p class="text-[11px] text-slate-400">What you did so far</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Quizzes</p>
+                    <p class="text-xl font-extrabold text-white mt-1"><%= progress.quizzes %></p>
+                </div>
+                <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Accuracy</p>
+                    <p class="text-xl font-extrabold text-white mt-1"><%= progress.accuracy %>%</p>
+                </div>
+                <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Level</p>
+                    <p class="text-xl font-extrabold text-white mt-1"><%= progress.level %></p>
+                </div>
+                <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Streak</p>
+                    <p class="text-xl font-extrabold text-white mt-1"><%= progress.streak %>d</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-borderBg/60">
+                <a href="/profile" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-inputBg hover:bg-hoverBg border border-borderBg text-slate-200 hover:text-white text-xs font-semibold transition-all">
+                    <i data-lucide="map" class="w-4 h-4"></i>
+                    <span>Open the mastery map</span>
+                </a>
+
+                <button onclick="logout()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 hover:text-rose-200 text-xs font-semibold transition-all">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Sign out</span>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'settings' }) %>

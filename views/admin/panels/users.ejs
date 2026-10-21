@@ -1,0 +1,103 @@
+<%# Admin panel: users - the real accounts of the platform %>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-extrabold text-white">User Management</h1>
+        <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Every account of QuizNova, what it did and which role it has.</p>
+    </div>
+
+    <div class="flex items-center gap-2">
+        <!-- Role filter -->
+        <div class="flex items-center gap-1 bg-inputBg border border-borderBg px-2 py-1.5 rounded-xl">
+            <% ['all', 'student', 'instructor', 'admin'].forEach(function (role) { %>
+                <button class="qn-role-filter <%= role === 'all' ? 'is-active' : '' %>" data-role="<%= role %>"><%= role === 'all' ? 'All' : role %></button>
+            <% }); %>
+        </div>
+    </div>
+</div>
+
+<!-- Summary -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brandBlue/20 text-brandBlue flex items-center justify-center">
+            <i data-lucide="users" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Accounts</p>
+            <p class="text-xl font-extrabold text-white"><%= users.length %></p>
+        </div>
+    </div>
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emeraldSuccess/20 text-emeraldSuccess flex items-center justify-center">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Students</p>
+            <p class="text-xl font-extrabold text-white"><%= users.filter(function (item) { return item.role === 'student'; }).length %></p>
+        </div>
+    </div>
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-purpleAccent/20 text-purpleAccent flex items-center justify-center">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Admins</p>
+            <p class="text-xl font-extrabold text-white"><%= users.filter(function (item) { return item.role === 'admin'; }).length %></p>
+        </div>
+    </div>
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amberWarning/20 text-amberWarning flex items-center justify-center">
+            <i data-lucide="list-checks" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Attempts</p>
+            <p class="text-xl font-extrabold text-white"><%= users.reduce(function (sum, item) { return sum + Number(item.attempts || 0); }, 0) %></p>
+        </div>
+    </div>
+</div>
+
+<!-- The table -->
+<div class="bg-cardBg border border-borderBg rounded-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="bg-inputBg/60 border-b border-borderBg">
+                <tr class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">
+                    <th class="px-4 py-3">Account</th>
+                    <th class="px-4 py-3">Role</th>
+                    <th class="px-4 py-3">Subject</th>
+                    <th class="px-4 py-3 text-right">Quizzes</th>
+                    <th class="px-4 py-3 text-right">Average</th>
+                    <th class="px-4 py-3 text-right">Joined</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-borderBg/60">
+                <% users.forEach(function (item) { %>
+                    <tr class="qn-user-row hover:bg-inputBg/40 transition-colors" data-user-row data-role="<%= item.role %>" data-search="<%= (item.full_name + ' ' + item.email + ' ' + (item.subject || '')).toLowerCase() %>">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-brandBlue/15 text-brandBlue flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                    <%= String(item.full_name || '?').split(' ').map(function (part) { return part.charAt(0); }).slice(0, 2).join('') %>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-white truncate"><%= item.full_name %></p>
+                                    <p class="text-[10px] text-slate-400 truncate"><%= item.email %></p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-[10px] font-bold uppercase rounded-full qn-role-<%= item.role %>"><%= item.role %></span>
+                        </td>
+                        <td class="px-4 py-3 text-xs text-slate-300"><%= item.subject || '-' %></td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-white"><%= item.attempts %></td>
+                        <td class="px-4 py-3 text-right text-xs font-bold <%= Number(item.average) >= 70 ? 'text-emeraldSuccess' : 'text-slate-300' %>"><%= item.average %>%</td>
+                        <td class="px-4 py-3 text-right text-[11px] text-slate-400"><%= String(item.created_at).slice(0, 10) %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="userEmpty" class="p-10 text-center hidden">
+        <i data-lucide="user-x" class="w-8 h-8 mx-auto text-slate-600"></i>
+        <p class="text-sm text-slate-400 mt-2">No account matches that search.</p>
+    </div>
+</div>

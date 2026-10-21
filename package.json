@@ -1,0 +1,35 @@
+{
+  "name": "quiznova_web",
+  "version": "1.0.0",
+  "description": "QuizNova - student quiz and assessment platform (Express + EJS + MySQL)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "db:setup": "node db/setup.js",
+    "db:migrate": "node db/migrate.js",
+    "fix:encoding": "node db/repair-encoding.js",
+    "db:promote": "node db/promote.js",
+    "db:password": "node db/set-password.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "quiz",
+    "education",
+    "express",
+    "ejs",
+    "mysql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "mysql2": "^3.24.6",
+    "nodemon": "^3.1.14"
+  }
+}

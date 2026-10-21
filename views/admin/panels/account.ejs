@@ -1,0 +1,283 @@
+<div class="qn-admin-panel p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+<%# Admin panel: account - included by admin/adminportal.ejs %>
+<!-- THE ADMINISTRATOR -->
+            <div class="qn-account-hero p-6 sm:p-8">
+                <div class="relative z-10 flex flex-col lg:flex-row lg:items-center gap-6">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brandBlue to-cyanAccent flex items-center justify-center shadow-lg shadow-brandBlue/30 shrink-0">
+                            <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h1 class="text-2xl font-extrabold text-white tracking-tight"><%= user ? user.name : 'Administrator' %></h1>
+                                <span class="qn-role-admin text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">Administrator</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1 truncate">
+                                <%= account && account.email ? account.email : '' %><% if (account && account.username) { %> · @<%= account.username %><% } %>
+                            </p>
+                            <p class="text-[11px] text-slate-500 mt-0.5">
+                                In the portal since <%= account && account.created_at ? String(account.created_at).slice(0, 10) : 'today' %>
+                                <% if (account && account.subject) { %> · <%= account.subject %><% } %>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="lg:ml-auto flex flex-wrap items-center gap-2">
+                        <a href="/admin/builder" class="inline-flex items-center gap-2 px-3.5 py-2 bg-brandBlue hover:bg-brandHover text-white text-xs font-bold rounded-xl shadow-md shadow-brandBlue/25 transition-all">
+                            <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                            <span>Build an assessment</span>
+                        </a>
+                        <a href="/admin/users" class="inline-flex items-center gap-2 px-3.5 py-2 bg-inputBg hover:bg-borderBg text-slate-300 text-xs font-semibold rounded-xl border border-borderBg transition-all">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Manage the users</span>
+                        </a>
+                        <a href="/admin/messages" class="inline-flex items-center gap-2 px-3.5 py-2 bg-inputBg hover:bg-borderBg text-slate-300 text-xs font-semibold rounded-xl border border-borderBg transition-all">
+                            <i data-lucide="message-square" class="w-4 h-4"></i>
+                            <span>The inbox</span>
+                        </a>
+                        <a href="/admin/settings" class="inline-flex items-center gap-2 px-3.5 py-2 bg-inputBg hover:bg-borderBg text-slate-300 text-xs font-semibold rounded-xl border border-borderBg transition-all">
+                            <i data-lucide="sliders" class="w-4 h-4"></i>
+                            <span>Platform settings</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THE SNAPSHOT OF THE PLATFORM -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="qn-account-tile p-4 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Students</span>
+                        <i data-lucide="users" class="w-4 h-4 text-cyanAccent"></i>
+                    </div>
+                    <p class="text-2xl font-extrabold text-white"><%= stats ? stats.students : 0 %></p>
+                    <p class="text-[10px] text-slate-500">accounts on the platform</p>
+                </div>
+
+                <div class="qn-account-tile p-4 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Assessments</span>
+                        <i data-lucide="file-check" class="w-4 h-4 text-brandBlue"></i>
+                    </div>
+                    <p class="text-2xl font-extrabold text-white"><%= stats ? stats.quizzes : 0 %></p>
+                    <p class="text-[10px] text-slate-500">quizzes in the builder</p>
+                </div>
+
+                <div class="qn-account-tile p-4 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Attempts</span>
+                        <i data-lucide="activity" class="w-4 h-4 text-emeraldSuccess"></i>
+                    </div>
+                    <p class="text-2xl font-extrabold text-white"><%= stats ? stats.attempts : 0 %></p>
+                    <p class="text-[10px] text-slate-500">finished quizzes</p>
+                </div>
+
+                <div class="qn-account-tile p-4 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Open messages</span>
+                        <i data-lucide="message-square" class="w-4 h-4 text-amberWarning"></i>
+                    </div>
+                    <p class="text-2xl font-extrabold text-white"><%= stats ? stats.openMessages : 0 %></p>
+                    <p class="text-[10px] text-slate-500">waiting for an answer</p>
+                </div>
+            </div>
+
+            <!-- THE ACTIVITY AND THE ACCOUNT -->
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+
+                <!-- WHAT HAPPENED ON THE PLATFORM -->
+                <div class="lg:col-span-3 space-y-6">
+                    <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-white">The last attempts</h3>
+                                <p class="text-xs text-slate-400">What the students finished lately.</p>
+                            </div>
+                            <a href="/admin/scores" class="inline-flex items-center gap-1 text-xs text-brandBlue font-semibold hover:underline flex-shrink-0">
+                                <span>Every score</span>
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+
+                        <% if (scores.length) { %>
+                            <div class="space-y-3">
+                                <% scores.slice(0, 5).forEach(function (attempt) { %>
+                                    <div class="qn-activity">
+                                        <span class="qn-activity__dot <%= Number(attempt.score) >= (stats ? stats.passingScore : 60) ? 'is-green' : '' %>">
+                                            <i data-lucide="check" class="w-2.5 h-2.5"></i>
+                                        </span>
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="text-xs font-bold text-white truncate"><%= attempt.full_name %></p>
+                                                <p class="text-[11px] text-slate-400 truncate"><%= attempt.title %></p>
+                                            </div>
+                                            <span class="text-xs font-extrabold <%= Number(attempt.score) >= (stats ? stats.passingScore : 60) ? 'text-emeraldSuccess' : 'text-rose-400' %> flex-shrink-0"><%= attempt.score %>%</span>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-xs text-slate-500">No attempt yet - the students have not finished a quiz.</p>
+                        <% } %>
+                    </div>
+
+                    <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-white">The latest messages</h3>
+                                <p class="text-xs text-slate-400">What the students asked.</p>
+                            </div>
+                            <a href="/admin/messages" class="inline-flex items-center gap-1 text-xs text-brandBlue font-semibold hover:underline flex-shrink-0">
+                                <span>The inbox</span>
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+
+                        <% if (inbox.length) { %>
+                            <div class="space-y-3">
+                                <% inbox.slice(0, 5).forEach(function (message) { %>
+                                    <div class="qn-activity">
+                                        <span class="qn-activity__dot <%= message.status === 'open' ? 'is-amber' : 'is-green' %>">
+                                            <i data-lucide="message-square" class="w-2.5 h-2.5"></i>
+                                        </span>
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="text-xs font-bold text-white truncate"><%= message.subject %></p>
+                                                <p class="text-[11px] text-slate-400 truncate"><%= message.full_name %> · <%= String(message.body).slice(0, 60) %></p>
+                                            </div>
+                                            <span class="text-[10px] font-bold uppercase tracking-wider <%= message.status === 'open' ? 'text-amberWarning' : 'text-slate-500' %> flex-shrink-0"><%= message.status %></span>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-xs text-slate-500">No message yet.</p>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- THE ACCOUNT ITSELF -->
+                <div class="lg:col-span-2 space-y-6">
+
+                    <!-- The profile of the account -->
+                    <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-brandBlue/20 text-brandBlue flex items-center justify-center">
+                                <i data-lucide="id-card" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Your account</h3>
+                                <p class="text-[11px] text-slate-400">How the platform knows you</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-400 mb-1.5" for="accountName">Display name</label>
+                                <input type="text" id="accountName" class="qn-account-input" value="<%= user ? user.name : '' %>" placeholder="Your name">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-400 mb-1.5" for="accountEmail">Email</label>
+                                    <input type="email" id="accountEmail" class="qn-account-input" value="<%= account && account.email ? account.email : '' %>" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-400 mb-1.5" for="accountUsername">Username</label>
+                                    <input type="text" id="accountUsername" class="qn-account-input" value="<%= account && account.username ? account.username : '' %>" disabled>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-400 mb-1.5" for="accountRole">Role</label>
+                                    <input type="text" id="accountRole" class="qn-account-input" value="Administrator" disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-slate-400 mb-1.5" for="accountSubject">Subject</label>
+                                    <input type="text" id="accountSubject" class="qn-account-input" value="<%= account && account.subject ? account.subject : '' %>" placeholder="Your subject">
+                                </div>
+                            </div>
+
+                            <button id="accountSaveName" class="w-full py-2.5 bg-brandBlue hover:bg-brandHover text-white text-xs font-bold rounded-xl shadow-md shadow-brandBlue/20 transition-all">
+                                Save the account
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- The password -->
+                    <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-amberWarning/20 text-amberWarning flex items-center justify-center">
+                                <i data-lucide="key-round" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">The password</h3>
+                                <p class="text-[11px] text-slate-400">Keep the portal safe</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-400 mb-1.5" for="accountCurrentPassword">Current password</label>
+                                <input type="password" id="accountCurrentPassword" autocomplete="current-password" class="qn-account-input" placeholder="The password you have now">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-400 mb-1.5" for="accountNewPassword">New password</label>
+                                <input type="password" id="accountNewPassword" autocomplete="new-password" class="qn-account-input" placeholder="At least 6 characters">
+                            </div>
+                            <p id="accountPasswordError" class="hidden text-[11px] text-rose-400"></p>
+
+                            <button id="accountChangePassword" class="w-full py-2.5 bg-amberWarning/15 hover:bg-amberWarning/25 text-amberWarning border border-amberWarning/30 text-xs font-bold rounded-xl transition-all">
+                                Change the password
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- The preferences -->
+                    <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-cyanAccent/20 text-cyanAccent flex items-center justify-center">
+                                <i data-lucide="sliders-horizontal" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white">Your preferences</h3>
+                                <p class="text-[11px] text-slate-400">The way the portal works for you</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3 py-1">
+                            <div>
+                                <p class="text-xs font-semibold text-white">The light mode</p>
+                                <p class="text-[11px] text-slate-400">A brighter portal</p>
+                            </div>
+                            <button id="accountLightMode" class="qn-switch" aria-pressed="false" aria-label="The light mode">
+                                <span class="qn-switch__knob"></span>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3 py-1">
+                            <div>
+                                <p class="text-xs font-semibold text-white">Email notifications</p>
+                                <p class="text-[11px] text-slate-400">A mail when a student writes</p>
+                            </div>
+                            <button id="accountEmails" class="qn-switch" aria-pressed="false" aria-label="The email notifications">
+                                <span class="qn-switch__knob"></span>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-3 py-1">
+                            <div>
+                                <p class="text-xs font-semibold text-white">The live badge</p>
+                                <p class="text-[11px] text-slate-400">The green dot of the realtime stream</p>
+                            </div>
+                            <button id="accountLiveBadge" class="qn-switch" aria-pressed="false" aria-label="The live badge">
+                                <span class="qn-switch__knob"></span>
+                            </button>
+                        </div>
+
+                        <button id="accountSavePreferences" class="w-full py-2.5 bg-inputBg hover:bg-borderBg text-slate-200 text-xs font-bold rounded-xl border border-borderBg transition-all">
+                            Save the preferences
+                        </button>
+                    </div>
+                </div>
+            </div>
+</div>

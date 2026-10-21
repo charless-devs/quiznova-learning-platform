@@ -1,0 +1,187 @@
+<div class="qn-admin-panel p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+<%# Admin panel: dashboard - included by admin/adminportal.ejs %>
+<!-- Welcome Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-white tracking-tight">Admin Overview</h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Real-time statistics for active courses, student submissions, and assessment pass rates.</p>
+                </div>
+                <div class="flex items-center gap-2 bg-inputBg border border-borderBg px-3 py-1.5 rounded-xl text-xs text-slate-300">
+                    <i data-lucide="calendar" class="w-4 h-4 text-brandBlue"></i>
+                    <span><%= today %> • Term 2</span>
+                </div>
+            </div>
+            <!-- Key Metric Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-cardBg border border-borderBg rounded-2xl p-5 hover:border-brandBlue/50 transition-all space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Assessments</span>
+                        <div class="w-9 h-9 rounded-xl bg-brandBlue/20 text-brandBlue flex items-center justify-center">
+                            <i data-lucide="file-check" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl font-extrabold text-white"><%= stats ? stats.quizzes : 0 %></span>
+                        <span class="text-[10px] font-bold text-emeraldSuccess flex items-center gap-0.5">in the platform</span>
+                    </div>
+                </div>
+                <div class="bg-cardBg border border-borderBg rounded-2xl p-5 hover:border-cyanAccent/50 transition-all space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Students</span>
+                        <div class="w-9 h-9 rounded-xl bg-cyanAccent/20 text-cyanAccent flex items-center justify-center">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl font-extrabold text-white"><%= stats ? stats.students : 0 %></span>
+                        <span class="text-[10px] font-bold text-emeraldSuccess">students</span>
+                    </div>
+                </div>
+                <div class="bg-cardBg border border-borderBg rounded-2xl p-5 hover:border-emeraldSuccess/50 transition-all space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Average Pass Rate</span>
+                        <div class="w-9 h-9 rounded-xl bg-emeraldSuccess/20 text-emeraldSuccess flex items-center justify-center">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl font-extrabold text-white"><%= stats ? stats.passRate : 0 %>%</span>
+                        <span class="text-[10px] font-bold text-emeraldSuccess">from <%= stats ? stats.passingScore : 60 %>%</span>
+                    </div>
+                </div>
+                <div class="bg-cardBg border border-borderBg rounded-2xl p-5 hover:border-amberWarning/50 transition-all space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Open messages</span>
+                        <div class="w-9 h-9 rounded-xl bg-amberWarning/20 text-amberWarning flex items-center justify-center">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl font-extrabold text-white"><%= stats ? stats.openMessages : 0 %></span>
+                        <span class="text-[10px] font-bold text-amberWarning">open messages</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Live Exam Status & Submissions Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Recent Student Submissions Table (2 cols) -->
+                <div class="lg:col-span-2 bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Recent Student Submissions</h3>
+                            <p class="text-xs text-slate-400">The latest attempts of the students.</p>
+                        </div>
+                        <a href="/admin/scores" class="inline-flex items-center gap-1 text-xs text-brandBlue font-semibold hover:underline flex-shrink-0">
+                            <span>View all</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
+
+                    <% if (scores.length) { %>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead>
+                                    <tr class="text-slate-400 border-b border-borderBg uppercase font-bold text-[10px] tracking-wider">
+                                        <th class="pb-3 px-2">Student</th>
+                                        <th class="pb-3 px-2">Assessment</th>
+                                        <th class="pb-3 px-2">Score</th>
+                                        <th class="pb-3 px-2">Status</th>
+                                        <th class="pb-3 px-2 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-borderBg/60 text-slate-300">
+                                    <% scores.slice(0, 6).forEach(function (item) { %>
+                                        <% const passed = Number(item.score) >= (stats ? stats.passingScore : 60); %>
+                                        <tr class="hover:bg-inputBg/50 transition-colors" data-search="<%= (item.full_name + ' ' + item.title + ' ' + item.subject).toLowerCase() %>">
+                                            <td class="py-3 px-2 font-semibold text-white"><%= item.full_name %></td>
+                                            <td class="py-3 px-2 max-w-[14rem] truncate"><%= item.title %></td>
+                                            <td class="py-3 px-2 font-bold <%= passed ? 'text-emeraldSuccess' : 'text-amberWarning' %>"><%= item.score %>%</td>
+                                            <td class="py-3 px-2">
+                                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border <%= passed ? 'bg-emeraldSuccess/20 text-emeraldSuccess border-emeraldSuccess/30' : 'bg-amberWarning/20 text-amberWarning border-amberWarning/30' %>"><%= passed ? 'PASSED' : 'REVIEW' %></span>
+                                            </td>
+                                            <td class="py-3 px-2 text-right">
+                                                <button onclick="viewStudentDetail('<%= item.id %>')" class="text-brandBlue font-semibold hover:underline">Details</button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="py-10 text-center space-y-2">
+                            <i data-lucide="inbox" class="w-8 h-8 mx-auto text-slate-600"></i>
+                            <p class="text-sm text-slate-400">No attempt yet - the students are waiting for you.</p>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- The assessments of the platform (1 col) -->
+                <div class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <h3 class="text-sm font-bold text-white">Your assessments</h3>
+                        <span class="text-[10px] font-mono text-slate-500"><%= quizzes.length %> total</span>
+                    </div>
+
+                    <% if (quizzes.length) { %>
+                        <div class="space-y-3">
+                            <% quizzes.slice(0, 5).forEach(function (quiz) { %>
+                                <div class="p-3 bg-inputBg rounded-xl border border-borderBg space-y-2">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="font-bold text-xs text-white truncate"><%= quiz.title %></span>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded flex-shrink-0 <%= quiz.status === 'IN_PROGRESS' ? 'text-emeraldSuccess bg-emeraldSuccess/10' : quiz.status === 'UPCOMING' ? 'text-slate-400 bg-slate-700/40' : quiz.status === 'DRAFT' ? 'text-amberWarning bg-amberWarning/10' : 'text-brandBlue bg-brandBlue/10' %>"><%= quiz.status.replace('_', ' ') %></span>
+                                    </div>
+                                    <div class="flex justify-between text-[11px] text-slate-400">
+                                        <span class="truncate"><%= quiz.subject %></span>
+                                        <span class="flex-shrink-0"><%= quiz.duration_minutes %> mins &middot; <%= quiz.total_questions %> Qs</span>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+
+                        <% if (quizzes.length > 5) { %>
+                            <a href="/admin/builder" class="block text-center text-[11px] font-semibold text-brandBlue hover:underline">
+                                and <%= quizzes.length - 5 %> more in the builder
+                            </a>
+                        <% } %>
+                    <% } else { %>
+                        <p class="text-sm text-slate-400">No assessment yet - the builder is waiting for the first one.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- The quick links -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <a href="/admin/users" class="group bg-cardBg border border-borderBg rounded-2xl p-5 hover:border-brandBlue/50 transition-all space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">User management</span>
+                        <div class="w-9 h-9 rounded-xl bg-cyanAccent/20 text-cyanAccent flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm font-bold text-white">Manage the accounts</p>
+                    <p class="text-[11px] text-slate-400"><%= users.length %> accounts in the platform</p>
+                </a>
+
+                <a href="/admin/messages" class="group bg-cardBg border border-borderBg rounded-2xl p-5 hover:border-brandBlue/50 transition-all space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Student messages</span>
+                        <div class="w-9 h-9 rounded-xl bg-amberWarning/20 text-amberWarning flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <i data-lucide="message-square" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm font-bold text-white">Answer the students</p>
+                    <p class="text-[11px] text-slate-400"><%= stats ? stats.openMessages : 0 %> messages are waiting</p>
+                </a>
+
+                <a href="/admin/settings" class="group bg-cardBg border border-borderBg rounded-2xl p-5 hover:border-brandBlue/50 transition-all space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Platform settings</span>
+                        <div class="w-9 h-9 rounded-xl bg-brandBlue/20 text-brandBlue flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <i data-lucide="sliders" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm font-bold text-white">Tune the platform</p>
+                    <p class="text-[11px] text-slate-400">The passing score is <%= stats ? stats.passingScore : 60 %>%</p>
+                </a>
+            </div>
+</div>

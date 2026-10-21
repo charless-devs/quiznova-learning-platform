@@ -1,0 +1,160 @@
+<%- include('partials/head', { title: 'QuizNova - Messages', page: 'messages' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-appBg/85 border-b border-borderBg/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="<%= user && user.role === 'admin' ? '/admin' : '/dashboard' %>" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="<%= user && user.role === 'admin' ? 'Back to the admin portal' : 'Back to the dashboard' %>">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-white tracking-tight">Messages</h1>
+                    <p class="text-[11px] text-slate-400">Talk to your teachers and study groups</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-cardBg border border-borderBg text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <span class="qn-live-dot" data-live-indicator></span>
+                    <span>Live</span>
+                </span>
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div class="qn-card overflow-hidden grid grid-cols-1 lg:grid-cols-[20rem_1fr] min-h-[32rem]">
+
+            <!-- Conversation list -->
+            <aside class="border-b lg:border-b-0 lg:border-r border-borderBg/70">
+                <div class="p-4 border-b border-borderBg/70">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="conversationSearch" placeholder="Search conversations..."
+                            class="w-full pl-10 pr-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+                    </div>
+                </div>
+
+                <div id="conversationList" class="max-h-[26rem] overflow-y-auto">
+                    <% const conversations = [
+                        { name: 'Dr. Maria Santos', role: 'Mathematics teacher', initials: 'MS', color: '#7c3aed', preview: 'The derivative quiz is open now.', time: '2m', unread: 2, thread: 'local' },
+                        { name: 'CS Study Group', role: '12 members', initials: 'CS', color: '#06b6d4', preview: 'Alex: does anyone have the notes?', time: '1h', unread: 5, thread: 'local' },
+                        { name: 'James Wilson', role: 'Physics teacher', initials: 'JW', color: '#f59e0b', preview: 'Great work on the wave quiz!', time: '3h', unread: 0, thread: 'local' },
+                        { name: 'Enrique Ramos', role: 'Study buddy', initials: 'ER', color: '#ec4899', preview: 'See you at the library?', time: '1d', unread: 0, thread: 'local' },
+                        { name: 'QuizNova Support', role: 'Reaches the QuizNova admin', initials: 'QN', color: '#10b981', preview: 'Ask us anything - a teacher reads every message.', time: '2d', unread: 0, thread: 'support' }
+                    ]; %>
+
+                    <% conversations.forEach(function (conversation) { %>
+                        <button class="qn-conversation <%= conversation.thread === 'support' ? 'is-active' : '' %>" data-conversation data-thread="<%= conversation.thread %>"
+                            data-name="<%= conversation.name %>" data-role="<%= conversation.role %>" data-initials="<%= conversation.initials %>" data-color="<%= conversation.color %>"
+                            data-search="<%= (conversation.name + ' ' + conversation.preview).toLowerCase() %>">
+                            <span class="qn-avatar" style="background-color: <%= conversation.color %>;"><%= conversation.initials %></span>
+                            <span class="min-w-0 flex-1 text-left">
+                                <span class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-bold text-white truncate"><%= conversation.name %></span>
+                                    <span class="text-[10px] text-slate-500 flex-shrink-0"><%= conversation.time %></span>
+                                </span>
+                                <span class="flex items-center justify-between gap-2 mt-0.5">
+                                    <span class="text-[11px] text-slate-400 truncate"><%= conversation.preview %></span>
+                                    <% if (conversation.unread) { %>
+                                        <span class="qn-badge flex-shrink-0"><%= conversation.unread %></span>
+                                    <% } %>
+                                </span>
+                            </span>
+                        </button>
+                    <% }); %>
+                </div>
+            </aside>
+
+            <!-- Thread -->
+            <section class="flex flex-col">
+                <div class="flex items-center justify-between gap-4 p-4 border-b border-borderBg/70">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span id="threadAvatar" class="qn-avatar" style="background-color: #10b981;">QN</span>
+                        <div class="min-w-0">
+                            <p id="threadName" class="text-sm font-bold text-white truncate">QuizNova Support</p>
+                            <p id="threadRole" class="text-[11px] text-slate-400 truncate">Reaches the QuizNova admin</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button class="p-2 rounded-lg bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Call">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                        </button>
+                        <button class="p-2 rounded-lg bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="More">
+                            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- The support thread (the real one) -->
+                <div id="supportThread" class="flex-1 space-y-4 p-4 sm:p-6 overflow-y-auto max-h-[24rem]">
+                    <div class="qn-bubble is-incoming">
+                        <p>Hi <%= user ? user.name : 'there' %>! This is QuizNova Support. Write your question here and a member of the QuizNova admin team reads every message.</p>
+                        <span class="qn-bubble__time">Support</span>
+                    </div>
+
+                    <% messages.forEach(function (message) { %>
+                        <div class="qn-bubble is-outgoing">
+                            <p><%= message.body %></p>
+                            <span class="qn-bubble__time"><%= String(message.created_at).slice(11, 16) %></span>
+                        </div>
+
+                        <% if (message.reply) { %>
+                            <div class="qn-bubble is-incoming">
+                                <p><%= message.reply %></p>
+                                <span class="qn-bubble__time">QuizNova Support - <%= String(message.replied_at || message.created_at).slice(11, 16) %></span>
+                            </div>
+                        <% } %>
+                    <% }); %>
+                </div>
+
+                <!-- The demo threads -->
+                <div id="demoThread" class="hidden flex-1 space-y-4 p-4 sm:p-6 overflow-y-auto max-h-[24rem]">
+                    <div class="qn-bubble is-incoming">
+                        <p>Hi Alex! Your last quiz went really well - 86% on the derivatives midterm.</p>
+                        <span class="qn-bubble__time">09:12</span>
+                    </div>
+
+                    <div class="qn-bubble is-outgoing">
+                        <p>Thank you ma'am! I am still stuck on the chain rule though.</p>
+                        <span class="qn-bubble__time">09:14</span>
+                    </div>
+
+                    <div class="qn-bubble is-incoming">
+                        <p>Normal! Watch the lesson on implicit differentiation, then try the practice set.</p>
+                        <span class="qn-bubble__time">09:15</span>
+                    </div>
+
+                    <div class="qn-bubble is-outgoing">
+                        <p>On it, thanks ma'am!</p>
+                        <span class="qn-bubble__time">09:16</span>
+                    </div>
+                </div>
+
+                <!-- Composer -->
+                <div class="p-4 border-t border-borderBg/70 flex items-end gap-2">
+                    <button class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors flex-shrink-0" title="Attach a file">
+                        <i data-lucide="paperclip" class="w-4 h-4"></i>
+                    </button>
+                    <textarea id="messageInput" rows="1" placeholder="Write a message..."
+                        class="flex-1 resize-none bg-inputBg border border-borderBg rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all"></textarea>
+                    <button id="sendMessage" class="p-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white shadow-lg shadow-brand-600/25 transition-colors flex-shrink-0" title="Send">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'messages' }) %>

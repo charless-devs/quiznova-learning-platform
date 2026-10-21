@@ -1,0 +1,72 @@
+/* ==========================================================================
+   QuizNova - RAPIDHUNT live coding assessment
+   ========================================================================== */
+
+/* The quiz keeps its own dark palette (the light theme lives in
+   /css/base.css and always wins). */
+:root {
+    --qn-page: 18 22 38; /* #121626 */
+    --qn-card: 24 29 48; /* #181d30 */
+    --qn-nav: 14 18 32; /* #0e1220 */
+    --qn-border: 35 42 66; /* #232a42 */
+    --qn-code: 13 17 28; /* #0d111c */
+}
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0e1220;
+    --qn-scroll-thumb: #232a42;
+    --qn-scroll-thumb-hover: #00d2c4;
+
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+    background-color: rgb(var(--qn-page));
+    color: #e2e8f0;
+}
+
+html.light body {
+    color: #0f172a;
+}
+
+/* Glowing effects ------------------------------------------------------ */
+.glow-cyan {
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+}
+
+.glow-pink {
+    box-shadow: 0 0 15px rgba(255, 75, 114, 0.35);
+}
+
+/* Syntax highlighting (see formatSyntax in /js/quiz.js) ---------------- */
+.syn-keyword {
+    color: #ff79c6;
+    font-weight: 600;
+}
+
+.syn-func {
+    color: #50fa7b;
+}
+
+.syn-type {
+    color: #8be9fd;
+    font-style: italic;
+}
+
+.syn-num {
+    color: #bd93f9;
+}
+
+.syn-str {
+    color: #f1fa8c;
+}
+
+.syn-comment {
+    color: #6272a4;
+    font-style: italic;
+}
+
+/* Loading placeholder for the code block ------------------------------ */
+.code-loading {
+    color: #6272a4;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+}

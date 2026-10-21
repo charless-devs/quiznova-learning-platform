@@ -1,0 +1,604 @@
+<%- include('partials/head', { title: 'QuizNova - My Classes', page: 'classes' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col lg:flex-row antialiased overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- MOBILE HEADER NAVBAR -->
+    <header class="lg:hidden flex items-center justify-between p-4 bg-cardBg border-b border-borderBg sticky top-0 z-40">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-600 to-coral-500 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+            </div>
+            <span class="text-base font-bold text-white tracking-tight">Quiz<span class="text-brand-400">Nova</span></span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="toggleMobileMenu()" class="p-2 text-slate-400 hover:text-white rounded-lg bg-inputBg border border-borderBg">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-cardBg border-r border-borderBg flex flex-col justify-between p-5 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:z-auto">
+        <div>
+            <!-- Sidebar Header / Logo -->
+            <div class="hidden lg:flex items-center gap-3 mb-8 px-2">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-coral-500 flex items-center justify-center shadow-lg shadow-brand-500/30">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-white">Quiz<span class="text-brand-400">Nova</span></span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1">
+                <a href="/dashboard" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/classes" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-700 text-white font-semibold text-xs shadow-md shadow-brand-600/20">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>Classes</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-white/20 text-white rounded-full font-bold"><%= classes.length %></span>
+                </a>
+                <a href="/courses" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="graduation-cap" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Courses</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-brand-500/20 text-brand-300 rounded-full font-bold"><%= typeof courseCount !== 'undefined' ? courseCount : 0 %></span>
+                </a>
+                <a href="/materials" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="folder-kanban" class="w-4 h-4"></i>
+                    <span>Materials</span>
+                </a>
+                <a href="/assessment" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="award" class="w-4 h-4"></i>
+                    <span>Assessments</span>
+                </a>
+                <a href="/analytics" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="/community" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span>Community</span>
+                </a>
+                <a href="/messages" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="message-square" class="w-4 h-4 group-hover:text-brand-400 transition-colors"></i>
+                        <span>Messages</span>
+                    </div>
+                    <span class="px-2 py-0.5 text-[10px] bg-coral-500 text-white rounded-full font-bold">3</span>
+                </a>
+
+                <div class="pt-4 mt-4 border-t border-borderBg/70 space-y-1">
+                    <%- include("partials/admin-link", { user: user }) %>
+                    <a href="/settings" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-hoverBg transition-colors text-xs font-medium group">
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- User Profile Card in Sidebar -->
+        <div class="pt-4 border-t border-borderBg/70 flex items-center justify-between">
+            <a href="/profile" class="group flex items-center gap-3 flex-1 min-w-0 rounded-xl px-2 py-1.5 -mx-2 hover:bg-hoverBg transition-colors" title="Open my progress">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="<%= user ? user.name : 'Student' %>" class="w-9 h-9 rounded-xl object-cover ring-2 ring-brand-500/40 group-hover:ring-brand-400 transition-all flex-shrink-0">
+                <div class="min-w-0">
+                    <h4 class="text-xs font-bold text-white truncate group-hover:text-brand-300 transition-colors"><%= user ? user.name : 'Rock Lee' %></h4>
+                    <p class="text-[10px] text-slate-400 truncate group-hover:text-slate-300 transition-colors">View my progress</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 ml-auto text-slate-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all flex-shrink-0"></i>
+            </a>
+            <button onclick="logout()" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-hoverBg transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <!-- MAIN CLASSES CONTAINER -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
+
+        <!-- HEADER & TOOLBAR -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                    <span>My Classes</span>
+                    <span class="text-xs font-semibold px-2.5 py-1 bg-brand-500/20 text-brand-300 rounded-full border border-brand-500/30">Fall 2026</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">Manage your active lecture rooms, view class timetables, and submit pending assignments.</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors flex-shrink-0" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+                <button onclick="openJoinModal()" class="px-4 py-2.5 bg-gradient-to-r from-brand-600 to-coral-500 hover:from-brand-500 hover:to-coral-400 text-white font-semibold text-xs rounded-xl shadow-lg shadow-brand-600/25 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Join Class with Code</span>
+                </button>
+                <button onclick="openCreateClassModal()" class="px-4 py-2.5 bg-inputBg hover:bg-hoverBg text-slate-300 hover:text-white font-semibold text-xs rounded-xl border border-borderBg transition-colors flex items-center gap-2">
+                    <i data-lucide="folder-plus" class="w-4 h-4 text-brand-400"></i>
+                    <span class="hidden sm:inline">Create Class</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- STATS OVERVIEW CARDS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Card 1 -->
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-brand-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Enrolled Classes</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= classes.length %></span>
+                        <span class="text-[10px] text-emerald-400 font-semibold"><%= enrolledCount %> joined</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-coral-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-coral-500/20 text-coral-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="file-clock" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pending Assignments</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= waitingCount %></span>
+                        <span class="text-[10px] text-coral-400 font-semibold">not taken yet</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-cyan-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Live Right Now</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= liveCount %></span>
+                        <span class="text-[10px] text-emerald-400 font-semibold">streaming</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-4 hover:border-amber-500/40 transition-colors">
+                <div class="w-11 h-11 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="award" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Average Grade</span>
+                    <div class="flex items-baseline gap-2 mt-0.5">
+                        <span class="text-xl font-extrabold text-white"><%= progress ? progress.overall : 0 %>%</span>
+                        <span class="text-[10px] text-brand-300 font-semibold"><%= progress ? progress.quizzes : 0 %> quizzes</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SEARCH, FILTERS & VIEW TOGGLE BAR -->
+        <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Left Side: Search Bar & Department Filter -->
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                
+                <!-- Search Input -->
+                <div class="relative w-full sm:w-64">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search class name or code..." 
+                        class="w-full pl-10 pr-4 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors">
+                </div>
+
+                <!-- Department Filter Dropdown - the subjects of the real classes -->
+                <select id="deptFilter" onchange="applyFilters()" class="w-full sm:w-44 px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-slate-300 focus:outline-none focus:border-brand-500 transition-colors">
+                    <option value="ALL">All Subjects</option>
+                    <% Array.from(new Set(classes.map(function (klass) { return klass.department; }).filter(Boolean))).sort().forEach(function (department) { %>
+                        <option value="<%= department %>"><%= department %></option>
+                    <% }); %>
+                </select>
+
+                <!-- Status Filter Dropdown -->
+                <select id="statusFilter" onchange="applyFilters()" class="w-full sm:w-36 px-3 py-2 bg-inputBg border border-borderBg rounded-xl text-xs text-slate-300 focus:outline-none focus:border-brand-500 transition-colors">
+                    <option value="ALL">All Statuses</option>
+                    <option value="ACTIVE">Active / Live</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
+            </div>
+
+            <!-- Right Side: View Toggle (Grid vs List) -->
+            <div class="flex items-center justify-between w-full md:w-auto gap-4">
+                <span id="classCounterText" class="text-xs font-semibold text-slate-400">Showing <%= classes.length %> classes</span>
+                
+                <div class="flex items-center bg-inputBg border border-borderBg rounded-xl p-1 gap-1">
+                    <button id="btnGridView" onclick="setViewMode('grid')" class="p-1.5 rounded-lg text-white bg-brand-600 shadow-sm transition-all" title="Grid View">
+                        <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                    </button>
+                    <button id="btnListView" onclick="setViewMode('list')" class="p-1.5 rounded-lg text-slate-400 hover:text-white transition-all" title="List View">
+                        <i data-lucide="list" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CATEGORY TAB BADGES - the counts come from the classes -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <button onclick="filterByTab('ALL', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white shadow-md shadow-brand-600/20 whitespace-nowrap">
+                All Classes (<%= classes.length %>)
+            </button>
+            <button onclick="filterByTab('LIVE', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-inputBg text-slate-400 hover:text-white hover:bg-hoverBg border border-borderBg whitespace-nowrap flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-live"></span>
+                <span>Live Now (<%= liveCount %>)</span>
+            </button>
+            <button onclick="filterByTab('IN_PROGRESS', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-inputBg text-slate-400 hover:text-white hover:bg-hoverBg border border-borderBg whitespace-nowrap">
+                In Progress (<%= classes.filter(function (klass) { return klass.status === 'ACTIVE'; }).length %>)
+            </button>
+            <button onclick="filterByTab('COMPLETED', this)" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold bg-inputBg text-slate-400 hover:text-white hover:bg-hoverBg border border-borderBg whitespace-nowrap">
+                Completed (<%= classes.filter(function (klass) { return klass.status === 'COMPLETED'; }).length %>)
+            </button>
+        </div>
+
+        <!-- CLASSES CARDS CONTAINER (GRID / LIST TOGGLE) -->
+        <div id="classesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+            <!-- THE CLASSES OF THE PLATFORM (from the database) -->
+            <% classes.forEach(function (klass) { %>
+                <% const joined = Number(klass.enrolled) === 1; %>
+                <% const isLive = Number(klass.is_live) === 1; %>
+                <div class="class-card bg-cardBg border border-borderBg hover:border-brand-500/60 rounded-2xl p-5 transition-all hover:shadow-xl hover:-translate-y-1 group relative cursor-pointer flex flex-col justify-between"
+                    data-id="<%= klass.code %>" data-dept="<%= klass.department %>" data-status="<%= klass.status %>" data-live="<%= isLive ? 'true' : 'false' %>" data-title="<%= klass.title %>" data-code="<%= klass.code %>"
+                    data-instructor="<%= klass.instructor || '' %>" data-schedule="<%= klass.schedule || '' %>" data-description="<%= klass.description || '' %>" data-department="<%= klass.department %>"
+                    data-quizzes="<%= klass.quiz_count || 0 %>" data-members="<%= klass.member_count || 0 %>" data-joined="<%= joined ? 'true' : 'false' %>">
+
+                    <div>
+                        <!-- The badges of the card -->
+                        <div class="flex items-start justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-[10px] font-bold uppercase tracking-wider"><%= klass.code %></span>
+
+                                <% if (isLive) { %>
+                                    <span class="px-2.5 py-1 rounded-md bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 border border-rose-500/30">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-live"></span>
+                                        Live Now
+                                    </span>
+                                <% } %>
+
+                                <% if (joined) { %>
+                                    <span class="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/30">Joined</span>
+                                <% } %>
+                            </div>
+                            <button onclick="copyClassLink('<%= klass.code %>')" class="text-slate-500 hover:text-slate-300 p-1" title="Copy the class link">
+                                <i data-lucide="share-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+
+                        <!-- The title and the teacher -->
+                        <h3 class="text-base font-bold text-white group-hover:text-brand-300 transition-colors leading-snug"><%= klass.title %></h3>
+                        <p class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                            <i data-lucide="user-check" class="w-3.5 h-3.5 text-brand-400"></i>
+                            <span class="truncate"><%= klass.instructor || 'The teacher of the class' %></span>
+                        </p>
+
+                        <!-- The details of the class -->
+                        <div class="my-4 p-3 bg-inputBg/80 rounded-xl space-y-2 border border-borderBg/70 text-xs">
+                            <div class="flex items-center justify-between gap-3 text-slate-300">
+                                <span class="flex items-center gap-1.5 text-slate-400 shrink-0">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-400"></i>
+                                    Schedule:
+                                </span>
+                                <span class="font-semibold text-white text-right truncate"><%= klass.schedule || 'To be announced' %></span>
+                            </div>
+                            <div class="flex items-center justify-between gap-3 text-slate-300">
+                                <span class="flex items-center gap-1.5 text-slate-400 shrink-0">
+                                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-coral-400"></i>
+                                    Subject:
+                                </span>
+                                <span class="font-semibold text-slate-200 text-right truncate"><%= klass.department %></span>
+                            </div>
+                        </div>
+
+                        <% if (klass.description) { %>
+                            <p class="text-[11px] text-slate-400 leading-relaxed mb-4 line-clamp-2"><%= klass.description %></p>
+                        <% } %>
+                    </div>
+
+                    <!-- The buttons of the card -->
+                    <div class="flex items-center gap-2 pt-2">
+                        <button onclick="openClassDetails('<%= klass.code %>')" class="flex-1 py-2 bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs rounded-xl shadow-md transition-all text-center">
+                            View Class Details
+                        </button>
+
+                        <% if (!joined) { %>
+                            <button onclick="openJoinModal()" class="py-2 px-3 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 rounded-xl text-xs font-bold transition-all flex items-center gap-1">
+                                <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+                                <span>Join</span>
+                            </button>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+
+            <% if (!classes.length) { %>
+                <div class="md:col-span-2 lg:col-span-3 p-10 rounded-2xl bg-cardBg border border-borderBg text-center space-y-2">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-500/15 text-brand-400 flex items-center justify-center mx-auto">
+                        <i data-lucide="school" class="w-6 h-6"></i>
+                    </div>
+                    <p class="text-sm font-bold text-white">No class yet</p>
+                    <p class="text-xs text-slate-400">Ask your teacher for the class code and join the first class.</p>
+                    <button onclick="openJoinModal()" class="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl">
+                        <i data-lucide="key-round" class="w-4 h-4"></i>
+                        <span>Join with a code</span>
+                    </button>
+                </div>
+            <% } %>
+
+        </div>
+
+    </main>
+
+    <!-- JOIN CLASS MODAL -->
+    <div id="joinModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardBg border border-borderBg w-full max-w-md rounded-2xl p-6 shadow-2xl relative space-y-5">
+            <button onclick="closeJoinModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="space-y-1">
+                <div class="w-10 h-10 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center mb-2">
+                    <i data-lucide="key-round" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Join a New Class</h3>
+                <p class="text-xs text-slate-400">Ask your teacher for the class code, then enter it here to enroll.</p>
+            </div>
+
+            <form onsubmit="handleJoinSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5">Class Code (e.g. CS101-2026)</label>
+                    <input type="text" id="classCodeInput" required placeholder="Enter 6-character code"
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white uppercase tracking-wider font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div class="bg-inputBg p-3 rounded-xl text-[11px] text-slate-400 border border-borderBg/70 flex items-start gap-2">
+                    <i data-lucide="info" class="w-4 h-4 text-brand-400 shrink-0 mt-0.5"></i>
+                    <span>Make sure you are logged in with your official student account to retain course credits.</span>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeJoinModal()" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-inputBg rounded-xl border border-borderBg">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-brand-600 to-coral-500 hover:from-brand-500 hover:to-coral-400 rounded-xl shadow-lg shadow-brand-600/25">
+                        Join Class
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CREATE CLASS MODAL -->
+    <div id="createClassModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardBg border border-borderBg w-full max-w-md rounded-2xl p-6 shadow-2xl relative space-y-5">
+            <button onclick="closeCreateClassModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="space-y-1">
+                <div class="w-10 h-10 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center mb-2">
+                    <i data-lucide="folder-plus" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">Create a Class</h3>
+                <p class="text-xs text-slate-400">You become the instructor and join the class right away.</p>
+            </div>
+
+            <form onsubmit="handleCreateClass(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="newClassCode">Class code</label>
+                        <input type="text" id="newClassCode" required placeholder="BIO101" maxlength="20"
+                            class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white uppercase tracking-wider font-mono placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="newClassSubject">Subject</label>
+                        <select id="newClassSubject" required class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white focus:outline-none focus:border-brand-500 transition-all cursor-pointer">
+                            <option value="" disabled selected>Pick a subject...</option>
+                            <% subjects.forEach(function (subject) { %>
+                                <option value="<%= subject.name %>"><%= subject.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="newClassTitle">Title</label>
+                    <input type="text" id="newClassTitle" required placeholder="Biology 101 - Intro to Cells"
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5" for="newClassSchedule">Schedule (optional)</label>
+                    <input type="text" id="newClassSchedule" placeholder="Mon - 9:00 AM to 10:30 AM"
+                        class="w-full px-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                </div>
+
+                <p id="createClassError" class="hidden text-xs text-rose-400"></p>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeCreateClassModal()" class="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white bg-inputBg rounded-xl border border-borderBg">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-brand-600 to-coral-500 hover:from-brand-500 hover:to-coral-400 rounded-xl shadow-lg shadow-brand-600/25">
+                        Create Class
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DETAILED INTERACTIVE CLASS MODAL -->
+    <div id="classDetailModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6">
+        <div class="bg-cardBg border border-borderBg w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl relative flex flex-col overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="p-5 sm:p-6 border-b border-borderBg bg-gradient-to-r from-cardBg via-hoverBg to-cardBg flex items-start justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span id="detailCode" class="px-2.5 py-0.5 bg-brand-500/20 text-brand-300 text-[10px] font-bold rounded-md uppercase">CS101-2026</span>
+                        <span id="detailLiveBadge" class="px-2.5 py-0.5 bg-rose-500/20 text-rose-400 text-[10px] font-bold rounded-md uppercase hidden">Live Stream On</span>
+                    </div>
+                    <h2 id="detailTitle" class="text-lg sm:text-xl font-bold text-white leading-snug">Computer Science 101 - Intro to Web Dev</h2>
+                    <p id="detailInstructor" class="text-xs text-slate-400 mt-0.5">Instructor: Dr. Alan Turing</p>                </div>
+                
+                <button onclick="closeClassDetails()" class="p-2 text-slate-400 hover:text-white rounded-xl bg-inputBg border border-borderBg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Navigation Tabs -->
+            <div class="flex items-center gap-1 sm:gap-2 px-6 pt-3 bg-appBg border-b border-borderBg overflow-x-auto scrollbar-none">
+                <button onclick="switchDetailTab('overview', this)" class="modal-tab-btn px-4 py-2.5 text-xs font-semibold text-brand-400 border-b-2 border-brand-500 whitespace-nowrap">
+                    Overview & Syllabus
+                </button>
+                <button onclick="switchDetailTab('assignments', this)" class="modal-tab-btn px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white border-b-2 border-transparent whitespace-nowrap">
+                    <span id="detailQuizCount">Assignments &amp; Quizzes (0)</span>
+                </button>
+                <button onclick="switchDetailTab('schedule', this)" class="modal-tab-btn px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white border-b-2 border-transparent whitespace-nowrap">
+                    Timetable
+                </button>
+                <button onclick="switchDetailTab('classmates', this)" class="modal-tab-btn px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white border-b-2 border-transparent whitespace-nowrap">
+                    <span id="detailMemberCount">Classmates (0)</span>
+                </button>
+                <button onclick="switchDetailTab('resources', this)" class="modal-tab-btn px-4 py-2.5 text-xs font-semibold text-slate-400 hover:text-white border-b-2 border-transparent whitespace-nowrap">
+                    Resources & Downloads
+                </button>
+            </div>
+
+            <!-- Modal Tab Content Area -->
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+                
+                <!-- TAB 1: OVERVIEW -->
+                <div id="tabOverview" class="tab-content space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-inputBg p-4 rounded-2xl border border-borderBg space-y-1">
+                            <span class="text-slate-400 text-[10px] uppercase font-bold">Status</span>
+                            <p id="detailStatus" class="text-sm font-bold text-white">ACTIVE</p>
+                        </div>
+                        <div class="bg-inputBg p-4 rounded-2xl border border-borderBg space-y-1">
+                            <span class="text-slate-400 text-[10px] uppercase font-bold">Subject</span>
+                            <p id="detailDepartment" class="text-sm font-bold text-brand-400">Computer Science</p>
+                        </div>
+                        <div class="bg-inputBg p-4 rounded-2xl border border-borderBg space-y-1">
+                            <span class="text-slate-400 text-[10px] uppercase font-bold">Schedule</span>
+                            <p id="detailSchedule" class="text-sm font-bold text-white">Mon / Wed</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="text-sm font-bold text-white">Class Description</h4>
+                        <p id="detailDescription" class="text-slate-300 leading-relaxed">
+                            This course introduces fundamental concepts of modern web development, focusing on semantic HTML5, CSS layout systems (Flexbox & Grid), JavaScript ES6+ logic, DOM manipulation, asynchronous fetching, and web security basics.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TAB 2: ASSIGNMENTS -->
+                <div id="tabAssignments" class="tab-content hidden space-y-3">
+                    <div class="p-4 bg-inputBg border border-borderBg rounded-2xl flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-coral-400 font-bold uppercase">Due Tomorrow, 11:59 PM</span>
+                            <h4 class="text-sm font-bold text-white">Quiz #4: Promises and Async/Await</h4>
+                            <p class="text-slate-400">15 Multiple Choice Questions • 30 Mins limit</p>
+                        </div>
+                        <a href="/assessment" class="px-4 py-2 bg-coral-500 hover:bg-coral-600 text-white font-semibold rounded-xl text-xs">
+                            Start Quiz
+                        </a>
+                    </div>
+
+                    <div class="p-4 bg-inputBg border border-borderBg rounded-2xl flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] text-amber-400 font-bold uppercase">Due Friday, Oct 24</span>
+                            <h4 class="text-sm font-bold text-white">Project Submission: Dynamic Weather App API</h4>
+                            <p class="text-slate-400">Upload GitHub repository URL and live preview link</p>
+                        </div>
+                        <a href="/materials" class="px-4 py-2 bg-inputBg hover:bg-hoverBg text-slate-200 border border-borderBg rounded-xl text-xs font-semibold">
+                            Submit Work
+                        </a>
+                    </div>
+                </div>
+
+                <!-- TAB 3: TIMETABLE -->
+                <div id="tabSchedule" class="tab-content hidden space-y-3">
+                    <div class="p-4 bg-inputBg border border-borderBg rounded-2xl space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-white">Regular Weekly Lectures</span>
+                            <span class="text-brand-400 font-semibold">Mon & Wed (10:00 AM - 11:30 AM)</span>
+                        </div>
+                        <p class="text-slate-400">Location: Virtual Room Alpha / Engineering Hall 302</p>
+                    </div>
+                </div>
+
+                <!-- TAB 4: CLASSMATES -->
+                <div id="tabClassmates" class="tab-content hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="p-3 bg-inputBg border border-borderBg rounded-xl flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" class="w-8 h-8 rounded-full object-cover">
+                        <div>
+                            <h5 class="font-bold text-white">Rock Lee (You)</h5>
+                            <span class="text-[10px] text-slate-400">Class Representative</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-inputBg border border-borderBg rounded-xl flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=100" class="w-8 h-8 rounded-full object-cover">
+                        <div>
+                            <h5 class="font-bold text-white">Sakura Haruno</h5>
+                            <span class="text-[10px] text-slate-400">Student</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: RESOURCES -->
+                <div id="tabResources" class="tab-content hidden space-y-2">
+                    <div class="p-3 bg-inputBg border border-borderBg rounded-xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="file-text" class="w-5 h-5 text-brand-400"></i>
+                            <div>
+                                <h5 class="font-bold text-white">Lecture_08_Async_JS.pdf</h5>
+                                <span class="text-[10px] text-slate-400">4.2 MB • Updated 2 days ago</span>
+                            </div>
+                        </div>
+                        <a href="/materials" class="p-2 text-slate-400 hover:text-white" title="Open the materials">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-borderBg bg-cardBg flex items-center justify-between">
+                <span class="text-slate-400 text-xs">Need help? Contact teacher via direct messaging.</span>
+                <button onclick="closeClassDetails()" class="px-5 py-2 bg-inputBg hover:bg-hoverBg text-slate-200 border border-borderBg rounded-xl text-xs font-semibold">
+                    Close Window
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <%- include('partials/foot', { page: 'classes' }) %>

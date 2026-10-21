@@ -1,0 +1,109 @@
+<%# Admin panel: settings - the platform settings really change the app %>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-extrabold text-white">Platform Settings</h1>
+        <p class="text-xs sm:text-sm text-slate-400 mt-0.5">These values are stored in the database and used by the app right away.</p>
+    </div>
+
+    <button id="saveSettings" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brandBlue hover:bg-brandHover text-white text-xs font-bold transition-all">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        <span>Save the settings</span>
+    </button>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Switches -->
+    <section class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+        <h2 class="text-sm font-extrabold text-white flex items-center gap-2">
+            <i data-lucide="toggle-right" class="w-4 h-4 text-brandBlue"></i>
+            Switches
+        </h2>
+
+        <!-- Registration -->
+        <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-borderBg bg-inputBg/50">
+            <div class="min-w-0">
+                <p class="text-xs font-bold text-white">New registrations</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">When this is off, nobody can create an account any more.</p>
+            </div>
+            <button class="qn-switch <%= settings.registration_open === '1' ? 'is-on' : '' %>" data-setting="registration_open" aria-pressed="<%= settings.registration_open === '1' %>">
+                <span class="qn-switch__knob"></span>
+            </button>
+        </div>
+
+        <!-- Maintenance -->
+        <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-borderBg bg-inputBg/50">
+            <div class="min-w-0">
+                <p class="text-xs font-bold text-white">Maintenance mode</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">Blocks the sign up and shows a notice on the login page.</p>
+            </div>
+            <button class="qn-switch <%= settings.maintenance === '1' ? 'is-on' : '' %>" data-setting="maintenance" aria-pressed="<%= settings.maintenance === '1' %>">
+                <span class="qn-switch__knob"></span>
+            </button>
+        </div>
+
+        <!-- Passing score -->
+        <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50 space-y-2">
+            <label for="settingPassingScore" class="block">
+                <p class="text-xs font-bold text-white">Passing score</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">A quiz counts as passed from this percentage on.</p>
+            </label>
+            <div class="flex items-center gap-3">
+                <input type="range" id="settingPassingScore" min="0" max="100" step="5" value="<%= settings.passing_score %>" class="qn-range flex-1">
+                <span id="passingScoreValue" class="w-14 text-right text-sm font-extrabold text-white"><%= settings.passing_score %>%</span>
+            </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50 space-y-2">
+            <label for="settingDuration" class="block">
+                <p class="text-xs font-bold text-white">Default quiz duration</p>
+                <p class="text-[11px] text-slate-400 mt-0.5">The minutes a new assessment gets by default.</p>
+            </label>
+            <div class="flex items-center gap-3">
+                <input type="range" id="settingDuration" min="5" max="120" step="5" value="<%= settings.default_duration %>" class="qn-range flex-1">
+                <span id="durationValue" class="w-14 text-right text-sm font-extrabold text-white"><%= settings.default_duration %>m</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- The state -->
+    <section class="bg-cardBg border border-borderBg rounded-2xl p-5 space-y-4">
+        <h2 class="text-sm font-extrabold text-white flex items-center gap-2">
+            <i data-lucide="activity" class="w-4 h-4 text-emeraldSuccess"></i>
+            The platform right now
+        </h2>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Quizzes</p>
+                <p class="text-xl font-extrabold text-white mt-1"><%= stats ? stats.quizzes : 0 %></p>
+            </div>
+            <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Students</p>
+                <p class="text-xl font-extrabold text-white mt-1"><%= stats ? stats.students : 0 %></p>
+            </div>
+            <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Attempts</p>
+                <p class="text-xl font-extrabold text-white mt-1"><%= stats ? stats.attempts : 0 %></p>
+            </div>
+            <div class="p-4 rounded-xl border border-borderBg bg-inputBg/50">
+                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Pass rate</p>
+                <p class="text-xl font-extrabold text-white mt-1"><%= stats ? stats.passRate : 0 %>%</p>
+            </div>
+        </div>
+
+        <div class="p-4 rounded-xl border border-brandBlue/30 bg-brandBlue/5 space-y-2">
+            <p class="text-xs font-bold text-brandBlue flex items-center gap-2">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                What these settings do
+            </p>
+            <ul class="text-[11px] text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><strong>New registrations</strong> - the sign up form answers with an error.</li>
+                <li><strong>Maintenance mode</strong> - the sign up is closed and the site says it is under maintenance.</li>
+                <li><strong>Passing score</strong> - the result of a finished quiz says passed or failed.</li>
+                <li><strong>Default duration</strong> - the minutes a new assessment gets.</li>
+            </ul>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,98 @@
+<%# Admin panel: scores - the real attempts of the platform %>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-extrabold text-white">Student Scores &amp; Performance</h1>
+        <p class="text-xs sm:text-sm text-slate-400">Every attempt of every student, newest first.</p>
+    </div>
+
+    <div class="flex items-center gap-2">
+        <button id="exportScores" class="px-4 py-2 bg-inputBg hover:bg-borderBg text-slate-200 border border-borderBg rounded-xl text-xs font-bold flex items-center gap-2">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Export CSV Report</span>
+        </button>
+    </div>
+</div>
+
+<!-- Summary -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brandBlue/20 text-brandBlue flex items-center justify-center">
+            <i data-lucide="list-checks" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Attempts</p>
+            <p class="text-xl font-extrabold text-white"><%= scores.length %></p>
+        </div>
+    </div>
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emeraldSuccess/20 text-emeraldSuccess flex items-center justify-center">
+            <i data-lucide="gauge" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Average</p>
+            <p class="text-xl font-extrabold text-white"><%= stats ? stats.average : 0 %>%</p>
+        </div>
+    </div>
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amberWarning/20 text-amberWarning flex items-center justify-center">
+            <i data-lucide="target" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Pass rate</p>
+            <p class="text-xl font-extrabold text-white"><%= stats ? stats.passRate : 0 %>%</p>
+        </div>
+    </div>
+    <div class="bg-cardBg border border-borderBg rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-purpleAccent/20 text-purpleAccent flex items-center justify-center">
+            <i data-lucide="flag" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Passing score</p>
+            <p class="text-xl font-extrabold text-white"><%= stats ? stats.passingScore : 60 %>%</p>
+        </div>
+    </div>
+</div>
+
+<!-- The table -->
+<div class="bg-cardBg border border-borderBg rounded-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead>
+                <tr class="text-slate-400 border-b border-borderBg uppercase font-bold text-[10px] tracking-wider">
+                    <th class="pb-3 px-3">Student Name</th>
+                    <th class="pb-3 px-3">Course / Assessment</th>
+                    <th class="pb-3 px-3">Submission Date</th>
+                    <th class="pb-3 px-3">Time Spent</th>
+                    <th class="pb-3 px-3">Score %</th>
+                    <th class="pb-3 px-3">Grade</th>
+                    <th class="pb-3 px-3 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-borderBg/60 text-slate-300">
+                <% scores.forEach(function (item) { %>
+                    <% const score = Number(item.score) || 0; %>
+                    <% const grade = score >= 90 ? 'A+' : score >= 80 ? 'A' : score >= 70 ? 'B' : score >= 60 ? 'C' : 'D'; %>
+                    <tr class="hover:bg-inputBg/50 transition-colors qn-score-row" data-score-row data-search="<%= (item.full_name + ' ' + item.title + ' ' + item.subject).toLowerCase() %>">
+                        <td class="py-3 px-3 font-semibold text-white"><%= item.full_name %></td>
+                        <td class="py-3 px-3">
+                            <p class="font-medium text-slate-200 truncate max-w-[16rem]"><%= item.title %></p>
+                            <p class="text-[10px] text-slate-500"><%= item.subject %></p>
+                        </td>
+                        <td class="py-3 px-3"><%= String(item.submitted_at).slice(0, 16) %></td>
+                        <td class="py-3 px-3"><%= Math.floor(item.time_spent_seconds / 60) %>m <%= item.time_spent_seconds % 60 %>s</td>
+                        <td class="py-3 px-3 font-bold <%= score >= (stats ? stats.passingScore : 60) ? 'text-emeraldSuccess' : 'text-coralDanger' %>"><%= score %>%</td>
+                        <td class="py-3 px-3"><span class="px-2 py-0.5 rounded <%= score >= 70 ? 'bg-emeraldSuccess/20 text-emeraldSuccess' : 'bg-amberWarning/20 text-amberWarning' %> text-[10px] font-bold"><%= grade %></span></td>
+                        <td class="py-3 px-3 text-right">
+                            <button onclick="viewStudentDetail('<%= item.id %>')" class="text-brandBlue font-semibold hover:underline">Review</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="scoreEmpty" class="p-10 text-center hidden">
+        <i data-lucide="inbox" class="w-8 h-8 mx-auto text-slate-600"></i>
+        <p class="text-sm text-slate-400 mt-2">No attempt matches that search.</p>
+    </div>
+</div>

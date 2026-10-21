@@ -1,0 +1,95 @@
+/* ==========================================================================
+   QuizNova - student settings
+   ========================================================================== */
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #262c42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+.qn-card {
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    box-shadow: var(--qn-card-shadow);
+}
+
+/* Theme options -------------------------------------------------------- */
+.qn-theme-option {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #94a3b8;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.qn-theme-option:hover {
+    color: #fff;
+}
+
+.qn-theme-option.is-active {
+    color: #fff;
+    background-color: rgb(124 58 237 / 0.25);
+}
+
+/* Switches ------------------------------------------------------------- */
+.qn-switch {
+    width: 2.75rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--qn-input));
+    border: 1px solid rgb(var(--qn-border));
+    padding: 0.125rem;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.qn-switch__knob {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    background-color: #94a3b8;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.qn-switch.is-on {
+    background-color: rgb(124 58 237 / 0.35);
+    border-color: rgb(139 92 246 / 0.6);
+}
+
+.qn-switch.is-on .qn-switch__knob {
+    background-color: #fff;
+    transform: translateX(1.25rem);
+}
+
+/* Range slider ---------------------------------------------------------- */
+.qn-range {
+    appearance: none;
+    height: 0.375rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--qn-input));
+    outline: none;
+}
+
+.qn-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    background-color: #7c3aed;
+    border: 2px solid rgb(var(--qn-card));
+    cursor: pointer;
+}
+
+.qn-range::-moz-range-thumb {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    background-color: #7c3aed;
+    border: 2px solid rgb(var(--qn-card));
+    cursor: pointer;
+}

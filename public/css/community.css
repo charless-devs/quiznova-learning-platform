@@ -1,0 +1,40 @@
+/* ==========================================================================
+   QuizNova - community (coming soon placeholder)
+   ========================================================================== */
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0f111a;
+    --qn-scroll-thumb: #262c42;
+    --qn-scroll-thumb-hover: #7c3aed;
+}
+
+.qn-card {
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    box-shadow: var(--qn-card-shadow);
+}
+
+/* A soft pulse on the icon, so the placeholder feels alive. */
+.qn-soon-icon {
+    animation: qnSoonPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes qnSoonPulse {
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgb(124 58 237 / 0.35);
+    }
+    50% {
+        transform: scale(1.04);
+        box-shadow: 0 0 0 18px rgb(124 58 237 / 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .qn-soon-icon {
+        animation: none;
+    }
+}

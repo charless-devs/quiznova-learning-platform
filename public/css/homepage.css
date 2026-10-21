@@ -1,0 +1,64 @@
+/* ==========================================================================
+   QuizNova - homepage
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* Theme tokens                                                        */
+/* ------------------------------------------------------------------ */
+
+/* The homepage keeps its own dark palette (see /css/base.css for the
+   shared tokens and the light theme). */
+:root {
+    --qn-page: 11 15 25; /* the page background */
+    --qn-card: 19 25 39; /* cards, panels, the nav pill */
+    --qn-border: 31 41 61; /* borders */
+}
+
+body {
+    --qn-scroll-size: 8px;
+    --qn-scroll-track: #0b0f19;
+    --qn-scroll-thumb: #1f293d;
+    --qn-scroll-thumb-hover: #374151;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sticky header                                                       */
+/* ------------------------------------------------------------------ */
+
+/* Section links scroll smoothly and stop clear of the sticky header. */
+html {
+    scroll-behavior: smooth;
+    /* The mobile header carries an extra nav row, so it needs more room. */
+    scroll-padding-top: 8rem;
+}
+
+@media (min-width: 768px) {
+    html {
+        scroll-padding-top: 6rem;
+    }
+}
+
+/* The header gains a solid background once the page is scrolled. */
+#homeHeader.qn-header-scrolled {
+    background-color: rgb(var(--qn-page) / 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+html.light #homeHeader.qn-header-scrolled {
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+/* The sliding pill behind the active section link. */
+[data-nav-indicator] {
+    will-change: left, width, top, height;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    [data-nav-indicator] {
+        transition: none;
+    }
+}

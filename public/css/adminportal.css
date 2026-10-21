@@ -1,0 +1,409 @@
+/* ==========================================================================
+   QuizNova - admin portal
+   The shell (sidebar + top bar) and the panels of the portal.
+   ========================================================================== */
+
+/* The admin portal keeps its own dark palette (the light theme lives in
+   /css/base.css and always wins). */
+:root {
+    --qn-page: 11 13 23; /* #0b0d17 */
+    --qn-card: 19 23 40; /* #131728 */
+    --qn-nav: 24 29 49; /* #181d31 */
+    --qn-border: 35 42 66; /* #232a42 */
+    --qn-input: 26 32 53; /* #1a2035 */
+}
+
+body {
+    --qn-scroll-size: 6px;
+    --qn-scroll-track: #0b0d17;
+    --qn-scroll-thumb: #232a42;
+    --qn-scroll-thumb-hover: #0f62fe;
+
+    font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+    background-color: rgb(var(--qn-page));
+    color: #e2e8f0;
+}
+
+html.light body {
+    color: #0f172a;
+}
+
+/* Admin flavoured toast */
+.qn-toast {
+    --qn-toast-border: rgba(15, 98, 254, 0.4);
+    --qn-toast-bg: #131728;
+    --qn-toast-color: #e2e8f0;
+}
+
+.qn-toast__icon {
+    color: #0f62fe;
+}
+
+/* Glowing effects ------------------------------------------------------ */
+.glow-blue {
+    box-shadow: 0 0 20px rgba(15, 98, 254, 0.25);
+}
+
+.glow-green {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+}
+
+/* Cards ---------------------------------------------------------------- */
+.qn-card {
+    background-color: rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    box-shadow: var(--qn-card-shadow);
+}
+
+/* The keyboard shows where the focus is -------------------------------- */
+.qn-admin-panel a:focus-visible,
+.qn-admin-panel button:focus-visible,
+.qn-admin-panel input:focus-visible,
+.qn-admin-panel select:focus-visible,
+.qn-admin-panel textarea:focus-visible,
+#sidebar a:focus-visible,
+#sidebar button:focus-visible {
+    outline: 2px solid #0f62fe;
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+}
+
+/* The buttons feel the same everywhere --------------------------------- */
+.qn-admin-panel button:disabled,
+.qn-admin-panel button[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* A list that is still loading ----------------------------------------- */
+.qn-admin-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    font-size: 0.6875rem;
+    color: #94a3b8;
+}
+
+.qn-admin-loading::before {
+    content: '';
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 9999px;
+    border: 2px solid rgb(148 163 184 / 0.35);
+    border-top-color: #0f62fe;
+    animation: qn-spin 0.8s linear infinite;
+}
+
+@keyframes qn-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* The sidebar ---------------------------------------------------------- */
+.qn-sidebar-link {
+    position: relative;
+}
+
+.qn-sidebar-link.is-active::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 1.25rem;
+    border-radius: 9999px;
+    background-color: #0f62fe;
+}
+
+/* Role filters (the user list) ----------------------------------------- */
+.qn-role-filter {
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    color: #94a3b8;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.qn-role-filter:hover {
+    color: #fff;
+}
+
+.qn-role-filter.is-active {
+    color: #fff;
+    background-color: rgb(15 98 254 / 0.25);
+}
+
+/* Role pills of the user table ------------------------------------------ */
+.qn-role-student {
+    color: #34d399;
+    background-color: rgb(16 185 129 / 0.12);
+    border: 1px solid rgb(16 185 129 / 0.3);
+}
+
+.qn-role-instructor {
+    color: #a78bfa;
+    background-color: rgb(139 92 246 / 0.12);
+    border: 1px solid rgb(139 92 246 / 0.3);
+}
+
+.qn-role-admin {
+    color: #60a5fa;
+    background-color: rgb(15 98 254 / 0.15);
+    border: 1px solid rgb(15 98 254 / 0.35);
+}
+
+/* Switches (the platform settings) -------------------------------------- */
+.qn-switch {
+    width: 2.75rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--qn-input));
+    border: 1px solid rgb(var(--qn-border));
+    padding: 0.125rem;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.qn-switch__knob {
+    display: block;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    background-color: #94a3b8;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.qn-switch.is-on {
+    background-color: rgb(15 98 254 / 0.35);
+    border-color: rgb(15 98 254 / 0.6);
+}
+
+.qn-switch.is-on .qn-switch__knob {
+    background-color: #fff;
+    transform: translateX(1.25rem);
+}
+
+/* Range sliders -------------------------------------------------------- */
+.qn-range {
+    appearance: none;
+    height: 0.375rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--qn-input));
+    outline: none;
+}
+
+.qn-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    background-color: #0f62fe;
+    border: 2px solid rgb(var(--qn-card));
+    cursor: pointer;
+}
+
+.qn-range::-moz-range-thumb {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 9999px;
+    background-color: #0f62fe;
+    border: 2px solid rgb(var(--qn-card));
+    cursor: pointer;
+}
+
+/* The account of the administrator --------------------------------------- */
+
+/* The identity card at the top */
+.qn-account-hero {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 88% -20%, rgb(15 98 254 / 0.35), transparent 55%),
+        radial-gradient(circle at 8% 120%, rgb(6 182 212 / 0.2), transparent 50%),
+        rgb(var(--qn-card));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1.25rem;
+}
+
+.qn-account-hero::after {
+    content: '';
+    position: absolute;
+    right: -3rem;
+    top: -3rem;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(15 98 254 / 0.25);
+    pointer-events: none;
+}
+
+/* The tiles of the snapshot */
+.qn-account-tile {
+    background-color: rgb(var(--qn-input));
+    border: 1px solid rgb(var(--qn-border));
+    border-radius: 1rem;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.qn-account-tile:hover {
+    border-color: rgb(15 98 254 / 0.5);
+    transform: translateY(-2px);
+}
+
+/* The activity feed */
+.qn-activity {
+    position: relative;
+    padding-left: 1.75rem;
+}
+
+.qn-activity::before {
+    content: '';
+    position: absolute;
+    left: 0.4375rem;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 1px;
+    background-color: rgb(var(--qn-border));
+}
+
+.qn-activity__dot {
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(15 98 254 / 0.2);
+    color: #60a5fa;
+    border: 1px solid rgb(15 98 254 / 0.4);
+}
+
+.qn-activity__dot.is-green {
+    background-color: rgb(16 185 129 / 0.18);
+    color: #34d399;
+    border-color: rgb(16 185 129 / 0.4);
+}
+
+.qn-activity__dot.is-amber {
+    background-color: rgb(245 158 11 / 0.18);
+    color: #fbbf24;
+    border-color: rgb(245 158 11 / 0.4);
+}
+
+/* The fields of the forms */
+.qn-account-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.75rem;
+    background-color: rgb(var(--qn-input));
+    border: 1px solid rgb(var(--qn-border));
+    color: #e2e8f0;
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.qn-account-input:focus {
+    outline: none;
+    border-color: #0f62fe;
+    box-shadow: 0 0 0 3px rgb(15 98 254 / 0.2);
+}
+
+.qn-account-input:disabled {
+    opacity: 0.55;
+}
+
+/* The message inbox ----------------------------------------------------- */
+
+/* Filters ------------------------------------------------------------- */
+.qn-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #94a3b8;
+    background-color: rgb(var(--qn-input));
+    border: 1px solid rgb(var(--qn-border));
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.qn-filter:hover {
+    color: #fff;
+}
+
+.qn-filter.is-active {
+    color: #fff;
+    background-color: rgb(15 98 254 / 0.2);
+    border-color: rgb(15 98 254 / 0.5);
+}
+
+.qn-filter__count {
+    padding: 0 0.375rem;
+    border-radius: 9999px;
+    background-color: rgb(var(--qn-input));
+    font-size: 0.625rem;
+    padding: 0.0625rem 0.375rem;
+}
+
+/* The list ------------------------------------------------------------- */
+.qn-message {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.875rem 1rem;
+    border-left: 3px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.qn-message:hover {
+    background-color: rgb(var(--qn-hover));
+}
+
+.qn-message.is-selected {
+    background-color: rgb(15 98 254 / 0.1);
+    border-left-color: #0f62fe;
+}
+
+.qn-message.is-hidden {
+    display: none;
+}
+
+/* Status pills --------------------------------------------------------- */
+.qn-status {
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.5625rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+
+.qn-status.is-open {
+    color: #fbbf24;
+    background-color: rgb(245 158 11 / 0.12);
+    border: 1px solid rgb(245 158 11 / 0.3);
+}
+
+.qn-status.is-answered {
+    color: #34d399;
+    background-color: rgb(16 185 129 / 0.12);
+    border: 1px solid rgb(16 185 129 / 0.3);
+}
+
+.qn-status.is-closed {
+    color: #94a3b8;
+    background-color: rgb(148 163 184 / 0.12);
+    border: 1px solid rgb(148 163 184 / 0.3);
+}

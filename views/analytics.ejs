@@ -1,0 +1,176 @@
+<%- include('partials/head', { title: 'QuizNova - Analytics', page: 'analytics' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-appBg/85 border-b border-borderBg/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="<%= user && user.role === 'admin' ? '/admin' : '/dashboard' %>" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="<%= user && user.role === 'admin' ? 'Back to the admin portal' : 'Back to the dashboard' %>">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-white tracking-tight">Analytics</h1>
+                    <p class="text-[11px] text-slate-400">How your scores and accuracy are moving</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+        <!-- Stat cards -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="qn-card p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="gauge" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Average</p>
+                    <p class="text-xl font-extrabold text-white"><%= progress.overall %>%</p>
+                </div>
+            </div>
+
+            <div class="qn-card p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="list-checks" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Quizzes</p>
+                    <p class="text-xl font-extrabold text-white"><%= progress.quizzes %></p>
+                </div>
+            </div>
+
+            <div class="qn-card p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="target" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Accuracy</p>
+                    <p class="text-xl font-extrabold text-white"><%= progress.accuracy %>%</p>
+                </div>
+            </div>
+
+            <div class="qn-card p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-coral-500/15 text-coral-400 flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="flame" class="w-5 h-5"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="text-[10px uppercase tracking-wider text-slate-400 font-semibold">Streak</p>
+                    <p class="text-xl font-extrabold text-white"><%= progress.streak %>d</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Score per quiz -->
+            <section class="lg:col-span-2 qn-card p-5 sm:p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-extrabold text-white">Score per quiz</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Every attempt, oldest first</p>
+                    </div>
+                    <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-brand-500/15 text-brand-400 border border-brand-500/30"><%= progress.quizzes %> attempts</span>
+                </div>
+
+                <% if (progress.history.length) { %>
+                    <div class="qn-bars">
+                        <% progress.history.forEach(function (item) { %>
+                            <div class="qn-bar" title="<%= item.title %> - <%= item.score %>%">
+                                <div class="qn-bar__value"><%= item.score %>%</div>
+                                <div class="qn-bar__track">
+                                    <div class="qn-bar__fill <%= item.score >= 70 ? 'is-good' : 'is-warn' %>" style="height: <%= item.score %>%"></div>
+                                </div>
+                                <div class="qn-bar__label"><%= item.label %></div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="py-12 text-center space-y-2">
+                        <i data-lucide="bar-chart-2" class="w-8 h-8 mx-auto text-slate-600"></i>
+                        <p class="text-sm text-slate-400">No attempts yet - finish a quiz to see the chart.</p>
+                    </div>
+                <% } %>
+            </section>
+
+            <!-- Subject comparison -->
+            <section class="qn-card p-5 sm:p-6">
+                <h2 class="text-base font-extrabold text-white mb-4">Subject comparison</h2>
+
+                <% if (progress.subjects.length) { %>
+                    <ul class="space-y-4">
+                        <% progress.subjects.forEach(function (subject) { %>
+                            <li>
+                                <div class="flex items-center justify-between text-xs mb-1.5">
+                                    <span class="flex items-center gap-2 text-slate-300 font-medium truncate">
+                                        <span class="w-2 h-2 rounded-full" style="background-color: <%= subject.color %>"></span>
+                                        <span class="truncate"><%= subject.name %></span>
+                                    </span>
+                                    <span class="font-bold" style="color: <%= subject.color %>"><%= subject.score %>%</span>
+                                </div>
+                                <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                                    <div class="h-full rounded-full" style="width: <%= subject.score %>%; background-color: <%= subject.color %>"></div>
+                                </div>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p class="text-sm text-slate-400">Your subject breakdown shows up after the first quiz.</p>
+                <% } %>
+
+                <% if (progress.history.length > 1) { %>
+                    <div class="mt-5 pt-4 border-t border-borderBg/60 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Since your first quiz</span>
+                        <span class="font-extrabold <%= progress.history[progress.history.length - 1].score >= progress.history[0].score ? 'text-emerald-500' : 'text-coral-400' %>">
+                            <%= progress.history[progress.history.length - 1].score >= progress.history[0].score ? '+' : '' %><%= progress.history[progress.history.length - 1].score - progress.history[0].score %>%
+                        </span>
+                    </div>
+                <% } %>
+            </section>
+        </div>
+
+        <!-- Recent form -->
+        <section class="qn-card p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-extrabold text-white">Recent form</h2>
+                <a href="/profile" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300 transition-colors">
+                    <span>Open the mastery map</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <% if (progress.recent.length) { %>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
+                    <% progress.recent.forEach(function (item) { %>
+                        <div class="rounded-xl border border-borderBg/60 bg-inputBg/60 p-3 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-[10px] font-semibold text-slate-400 truncate"><%= item.subject %></span>
+                                <span class="text-sm font-extrabold <%= item.score >= 70 ? 'text-emerald-500' : 'text-amber-500' %>"><%= item.score %>%</span>
+                            </div>
+                            <div class="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                                <div class="h-full rounded-full <%= item.score >= 70 ? 'bg-emerald-500' : 'bg-amber-500' %>" style="width: <%= item.score %>%"></div>
+                            </div>
+                            <p class="text-[10px] text-slate-500 truncate"><%= item.date %></p>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p class="text-sm text-slate-400">Nothing to show yet.</p>
+            <% } %>
+        </section>
+    </main>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'analytics' }) %>

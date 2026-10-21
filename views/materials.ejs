@@ -1,0 +1,94 @@
+<%- include('partials/head', { title: 'QuizNova - Study Materials', page: 'materials' }) %>
+<body class="bg-appBg text-slate-200 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- TOP BAR -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-appBg/85 border-b border-borderBg/70">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="<%= user && user.role === 'admin' ? '/admin' : '/dashboard' %>" class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="<%= user && user.role === 'admin' ? 'Back to the admin portal' : 'Back to the dashboard' %>">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                    <i data-lucide="folder-kanban" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-extrabold text-white tracking-tight">Study materials</h1>
+                    <p class="text-[11px] text-slate-400"><%= catalogue.count %> files across your classes</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button data-theme-toggle class="p-2.5 rounded-xl bg-inputBg border border-borderBg text-slate-400 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+
+        <!-- Filters -->
+        <section class="qn-card p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center gap-4">
+            <!-- Search -->
+            <div class="relative flex-1 w-full">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="materialSearch" placeholder="Search notes, slides, past papers..."
+                    class="w-full pl-10 pr-4 py-2.5 bg-inputBg border border-borderBg rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-all">
+            </div>
+
+            <!-- Subject chips -->
+            <div id="materialFilters" class="flex flex-wrap items-center gap-2">
+                <button class="qn-chip is-active" data-subject="all">All</button>
+                <% catalogue.subjects.forEach(function (subject) { %>
+                    <button class="qn-chip" data-subject="<%= subject %>"><%= subject %></button>
+                <% }); %>
+            </div>
+        </section>
+
+        <!-- Empty state -->
+        <section id="materialEmpty" class="qn-card p-12 text-center space-y-3 hidden">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-brand-500/15 text-brand-400 flex items-center justify-center">
+                <i data-lucide="search-x" class="w-7 h-7"></i>
+            </div>
+            <h2 class="text-base font-extrabold text-white">Nothing found</h2>
+            <p class="text-sm text-slate-400">No material matches that search. Try another subject or keyword.</p>
+        </section>
+
+        <!-- Material grid -->
+        <section id="materialGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <% catalogue.items.forEach(function (item) { %>
+                <article class="qn-card qn-material group p-5 flex flex-col gap-4" data-material data-subject="<%= item.subject %>" data-search="<%= item.label.toLowerCase() + ' ' + item.classTitle.toLowerCase() + ' ' + item.subject.toLowerCase() %>">
+                    <div class="flex items-start gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-brand-500/15 text-brand-400 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <i data-lucide="<%= item.icon %>" class="w-5 h-5"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-bold text-white truncate"><%= item.label %></p>
+                            <p class="text-[11px] text-slate-400 truncate"><%= item.classTitle %></p>
+                        </div>
+                        <span class="px-2 py-0.5 text-[10px] font-bold uppercase rounded-md bg-slate-800 text-slate-300"><%= item.format %></span>
+                    </div>
+
+                    <div class="flex items-center gap-3 text-[11px] text-slate-400">
+                        <span class="flex items-center gap-1.5"><i data-lucide="layers" class="w-3.5 h-3.5"></i> <%= item.pages %> pages</span>
+                        <span class="flex items-center gap-1.5"><i data-lucide="hard-drive" class="w-3.5 h-3.5"></i> <%= item.size %></span>
+                        <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> <%= item.updated %></span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-3 border-t border-borderBg/60 mt-auto">
+                        <span class="px-2 py-1 text-[10px] font-semibold rounded-full bg-brand-500/15 text-brand-400 border border-brand-500/30"><%= item.subject %></span>
+                        <button class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-bold transition-colors" onclick="openMaterial('<%= item.title %>')">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>Open</span>
+                        </button>
+                    </div>
+                </article>
+            <% }); %>
+        </section>
+    </main>
+
+    <!-- JavaScript Interactions -->
+    <%- include('partials/foot', { page: 'materials' }) %>

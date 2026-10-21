@@ -1,0 +1,219 @@
+<%- include('partials/head', { title: 'RAPIDHUNT - Live Coding Assessment', page: 'quiz' }) %>
+<body class="min-h-screen bg-darkBg flex items-center justify-center p-3 sm:p-6 select-none relative overflow-x-hidden">
+
+    <!-- Ambient Decorative Glowing Orbs -->
+    <div class="fixed top-12 left-8 w-4 h-4 rounded-full bg-pinkAccent opacity-60 blur-xs animate-pulse pointer-events-none"></div>
+    <div class="fixed bottom-10 left-24 w-12 h-12 rounded-full bg-tealAccent opacity-40 blur-xl pointer-events-none"></div>
+    <div class="fixed top-1/4 right-10 w-16 h-16 rounded-full bg-cyanAccent opacity-30 blur-2xl pointer-events-none"></div>
+    <div class="fixed bottom-8 right-20 w-5 h-5 rounded-full bg-orangeAccent opacity-70 blur-xs pointer-events-none"></div>
+
+    <!-- MAIN EXAM CONTAINER BOARD -->
+    <div class="w-full max-w-6xl bg-cardBg rounded-3xl border border-mutedBorder shadow-2xl overflow-hidden flex flex-col relative z-10 my-auto">
+
+        <!-- 1. HEADER BAR -->
+        <header class="bg-[#101424] px-6 py-4 flex flex-col sm:flex-row items-center justify-between border-b border-mutedBorder/60 gap-4">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="relative flex items-center justify-center w-8 h-8 rounded-full border-2 border-pinkAccent text-pinkAccent">
+                    <i data-lucide="target" class="w-4 h-4"></i>
+                    <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-pinkAccent animate-ping"></span>
+                </div>
+                <span class="text-base font-extrabold tracking-widest text-white uppercase">RAPID<span class="text-pinkAccent">HUNT</span></span>
+            </div>
+
+            <!-- Digital Countdown Timer -->
+            <div class="flex items-center gap-2 px-5 py-1.5 rounded-full bg-navCardBg border border-cyanAccent/30 glow-cyan">
+                <i data-lucide="clock" class="w-4 h-4 text-cyanAccent animate-pulse"></i>
+                <span id="timerDisplay" class="font-mono text-xl font-extrabold text-cyanAccent tracking-widest">30:45</span>
+            </div>
+
+            <!-- User Profile Avatar -->
+            <div class="flex items-center gap-3">
+                <button data-theme-toggle class="p-2 rounded-lg bg-navCardBg border border-mutedBorder text-slate-300 hover:text-white transition-colors" title="Switch to light mode" aria-label="Switch to light mode" aria-pressed="false">
+                    <i data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" alt="John Smith" class="w-8 h-8 rounded-full object-cover ring-2 ring-tealAccent/50">
+                <span class="text-xs font-semibold text-slate-200">John Smith</span>
+            </div>
+        </header>
+
+        <!-- Dynamic Header Progress Line -->
+        <div class="w-full bg-navCardBg h-1">
+            <div id="topProgressBar" class="h-full bg-gradient-to-r from-tealAccent via-cyanAccent to-pinkAccent transition-all duration-300" style="width: 83%;"></div>
+        </div>
+
+        <!-- 2. STATS SUB-HEADER BAR -->
+        <div class="bg-[#14192b] px-6 py-3 border-b border-mutedBorder flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium">
+            
+            <!-- Institution Details -->
+            <div class="flex items-center gap-2 text-slate-400">
+                <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span class="truncate">Stanford University, Stanford.</span>
+            </div>
+
+            <!-- Live Quiz Metrics -->
+            <div class="flex flex-wrap items-center gap-4 sm:gap-6 text-slate-300">
+                <div>
+                    Questions: <span class="font-bold text-white ml-1">24</span>
+                </div>
+                <div>
+                    Answered: <span id="statAnswered" class="font-bold text-tealAccent ml-1">20</span>
+                </div>
+                <div>
+                    Mark for Review: <span id="statReview" class="font-bold text-orangeAccent ml-1">07</span>
+                </div>
+                <div>
+                    Skipped: <span id="statSkipped" class="font-bold text-redAccent ml-1">06</span>
+                </div>
+
+                <!-- Finish CTA Button -->
+                <button onclick="triggerFinishQuiz()" class="px-5 py-1.5 bg-pinkAccent hover:bg-pink-600 text-white font-bold text-xs rounded-lg transition-all glow-pink hover:scale-105 active:scale-95">
+                    Finish
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. MAIN WORKSPACE CONTAINER -->
+        <div class="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- LEFT NAVIGATION PALETTE (4 cols) -->
+            <div class="lg:col-span-4 bg-navCardBg border border-mutedBorder rounded-2xl p-5 shadow-lg">
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="text-sm font-bold text-white tracking-wide">Questions</h3>
+                    <span class="text-[10px] text-slate-400 font-mono">1 - 24 Palette</span>
+                </div>
+
+                <!-- 24 Circle Grid -->
+                <div id="questionGrid" class="grid grid-cols-5 gap-3.5">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Grid Legend -->
+                <div class="mt-6 pt-4 border-t border-mutedBorder/80 grid grid-cols-2 gap-2 text-[10px] text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full border border-tealAccent"></span>
+                        <span>Answered</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full border border-orangeAccent"></span>
+                        <span>For Review</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full border border-redAccent"></span>
+                        <span>Skipped</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-white"></span>
+                        <span>Current</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT QUESTION WORKSPACE AREA (8 cols) -->
+            <div class="lg:col-span-8 space-y-5">
+                
+                <!-- Question Title Header -->
+                <div class="space-y-2">
+                    <h2 id="qTitle" class="text-sm sm:text-base font-bold text-white leading-relaxed">
+                        21. Guess the output of the following program:
+                    </h2>
+                </div>
+
+                <!-- Code Snippet Display Box -->
+                <div class="bg-codeBg border border-mutedBorder/90 rounded-xl p-4 sm:p-5 font-mono text-xs leading-relaxed overflow-x-auto shadow-inner text-slate-300">
+                    <pre id="codeSnippet" class="whitespace-pre"><code><span class="syn-comment">#include&lt;stdio.h&gt;</span>
+<span class="syn-type">int</span> <span class="syn-func">main</span>()
+{
+   <span class="syn-type">int</span> x = <span class="syn-num">10</span>;
+   <span class="syn-type">float</span> y = <span class="syn-num">10.0</span>;
+   <span class="syn-keyword">if</span>(x == y)
+      <span class="syn-func">printf</span>(<span class="syn-str">"x and y are equal"</span>);
+   <span class="syn-keyword">else</span>
+      <span class="syn-func">printf</span>(<span class="syn-str">"x and y are not equal"</span>);
+   <span class="syn-keyword">return</span> <span class="syn-num">0</span>;
+}</code></pre>
+                </div>
+
+                <!-- Options Choices Cards Grid -->
+                <div id="optionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Footer Controls Row -->
+                <div class="pt-4 flex items-center justify-between border-t border-mutedBorder/80">
+                    
+                    <!-- Mark For Review Checkbox -->
+                    <label class="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer hover:text-white transition-colors">
+                        <input type="checkbox" id="reviewCheckbox" onchange="toggleReviewCurrent()" class="w-4 h-4 rounded border-mutedBorder bg-navCardBg text-tealAccent focus:ring-0 cursor-pointer">
+                        <span>Mark for review</span>
+                    </label>
+
+                    <!-- Navigation Action Buttons -->
+                    <div class="flex items-center gap-3">
+                        <button onclick="navigate(-1)" id="btnPrev" class="px-5 py-2 bg-navCardBg hover:bg-mutedBorder text-slate-300 hover:text-white text-xs font-semibold rounded-lg border border-mutedBorder transition-all flex items-center gap-1.5">
+                            <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                            <span>Previous</span>
+                        </button>
+
+                        <button onclick="navigate(1)" id="btnNext" class="px-5 py-2 bg-navCardBg hover:bg-tealAccent/20 text-tealAccent hover:text-white text-xs font-semibold rounded-lg border border-tealAccent/60 transition-all flex items-center gap-1.5 glow-cyan">
+                            <span>Next</span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FINAL SUBMISSION & SCORE SUMMARY MODAL -->
+    <div id="finishModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-cardBg border border-mutedBorder w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-5 text-center relative">
+            <div class="w-12 h-12 rounded-full bg-pinkAccent/20 text-pinkAccent flex items-center justify-center mx-auto">
+                <i data-lucide="award" class="w-6 h-6"></i>
+            </div>
+
+            <div class="space-y-1">
+                <h3 class="text-xl font-bold text-white">Assessment Complete!</h3>
+                <p class="text-xs text-slate-400">Here is your rapid submission summary report.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-3 bg-navCardBg border border-mutedBorder rounded-xl">
+                    <span class="text-slate-400 text-[10px] block">Questions Attempted</span>
+                    <span id="finalAttempted" class="text-lg font-bold text-tealAccent">20 / 24</span>
+                </div>
+                <div class="p-3 bg-navCardBg border border-mutedBorder rounded-xl">
+                    <span class="text-slate-400 text-[10px] block">Time Remaining</span>
+                    <span id="finalTime" class="text-lg font-bold text-cyanAccent">30:45</span>
+                </div>
+                <div class="p-3 bg-navCardBg border border-mutedBorder rounded-xl">
+                    <span class="text-slate-400 text-[10px] block">Marked for Review</span>
+                    <span id="finalReview" class="text-lg font-bold text-orangeAccent">7</span>
+                </div>
+                <div class="p-3 bg-navCardBg border border-mutedBorder rounded-xl">
+                    <span class="text-slate-400 text-[10px] block">Skipped</span>
+                    <span id="finalSkipped" class="text-lg font-bold text-redAccent">6</span>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeFinishModal()" class="flex-1 py-2.5 bg-navCardBg hover:bg-mutedBorder text-slate-300 font-semibold text-xs rounded-xl border border-mutedBorder">
+                    Back to Test
+                </button>
+                <button onclick="submitAttempt()" class="flex-1 py-2.5 bg-tealAccent hover:bg-cyanAccent text-slate-900 font-bold text-xs rounded-xl">
+                    Save Result
+                </button>
+                <button onclick="location.reload()" class="flex-1 py-2.5 bg-pinkAccent hover:bg-pink-600 text-white font-bold text-xs rounded-xl glow-pink">
+                    Restart Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <%- include('partials/foot', { page: 'quiz' }) %>
