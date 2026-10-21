@@ -6,6 +6,9 @@
  * The admin can upload a video file (it is stored in public/uploads/videos
  * and served by express.static) or set a link to a video that lives
  * somewhere else (YouTube, Vimeo, a direct mp4 ...).
+ *
+ * On Vercel the file system is read only, so the files go to the Vercel Blob
+ * store when BLOB_READ_WRITE_TOKEN is set.
  */
 
 const fs = require('fs');
@@ -18,6 +21,26 @@ const EXTENSIONS = ['.mp4', '.webm', '.ogg', '.ogv', '.mov', '.m4v'];
 
 /** The biggest file the server takes. */
 const MAX_SIZE = 200 * 1024 * 1024;
+
+/** The Blob store of Vercel. */
+const BLOB_API = 'https://blob.vercel-storage.com/v1';
+
+/** True when the files go to the Blob store and not to the disk. */
+function usesBlob() {
+    return !!process.env.BLOB_READ_WRITE_TOKEN;
+}
+
+/** True when the disk of the server can be written. */
+function canWriteToDisk() {
+    if (process.env.VERCEL) return false;
+
+    try {
+        ensureFolder();
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
 
 /** Makes sure the upload folder exists. */
 function ensureFolder() {
@@ -41,7 +64,8 @@ function extensionOf(name) {
 function safeName(name) {
     const base = path.basename(String(name || 'video'));
     const extension = extensionOf(base);
-    const stem = path.basename(base, path.extname(base))
+    const stem = path
+        .basename(base, path.extname(base))
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '')
@@ -50,12 +74,60 @@ function safeName(name) {
     return (stem || 'video') + extension;
 }
 
+/** Uploads a file to the Blob store of Vercel. */
+async function saveToBlob(name, buffer, contentType) {
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    const target = 'videos/' + name;
+
+    const response = await fetch(BLOB_API + '/upload?path=' + encodeURIComponent(target), {
+        method: 'POST',
+        headers: {
+            authorization: 'Bearer ' + token,
+            'content-type': contentType || 'application/octet-stream',
+            'x-content-disposition': 'inline',
+            'x-add-random-suffix': '1',
+        },
+        body: buffer,
+    });
+
+    if (!response.ok) {
+        const detail = await response.text();
+        throw new Error('The Blob store refused the file: ' + (detail || response.status));
+    }
+
+    const payload = await response.json().catch(function () {
+        return {};
+    });
+
+    const url = payload.url || (payload.blob && payload.blob.url);
+
+    if (!url) throw new Error('The Blob store did not return an address for the file.');
+
+    return url;
+}
+
+/** Removes a file from the Blob store of Vercel. */
+async function removeFromBlob(url) {
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    if (!token || !url || url.indexOf('blob.vercel-storage.com') === -1) return false;
+
+    try {
+        await fetch(BLOB_API + '/delete?url=' + encodeURIComponent(url), {
+            method: 'POST',
+            headers: { authorization: 'Bearer ' + token },
+        });
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
+
 /**
  * Writes an uploaded video and returns what the database needs.
  *
- * @returns {{file_path: string, file_name: string, file_size: number}}
+ * @returns {Promise<{file_path: string, file_name: string, file_size: number}>}
  */
-function save(courseId, fileName, buffer) {
+async function save(courseId, fileName, buffer, contentType) {
     if (!buffer || !buffer.length) {
         throw new Error('The file is empty.');
     }
@@ -69,7 +141,21 @@ function save(courseId, fileName, buffer) {
         throw new Error('Only ' + EXTENSIONS.join(', ') + ' videos are accepted.');
     }
 
-    ensureFolder();
+    if (usesBlob()) {
+        const url = await saveToBlob('course-' + (courseId || 0) + '-' + Date.now() + '-' + name, buffer, contentType);
+
+        return {
+            file_path: url,
+            file_name: fileName || name,
+            file_size: buffer.length,
+        };
+    }
+
+    if (!canWriteToDisk()) {
+        throw new Error(
+            'The server cannot store files (the disk is read only). Set BLOB_READ_WRITE_TOKEN for the Blob store of Vercel, or use a link.'
+        );
+    }
 
     const stored = 'course-' + (courseId || 0) + '-' + Date.now() + '-' + name;
     fs.writeFileSync(path.join(UPLOAD_DIR, stored), buffer);
@@ -82,8 +168,14 @@ function save(courseId, fileName, buffer) {
 }
 
 /** Removes an uploaded file (the database row is removed by the route). */
-function remove(filePath) {
+async function remove(filePath) {
     if (!filePath || typeof filePath !== 'string') return false;
+
+    // A file of the Blob store.
+    if (filePath.indexOf('blob.vercel-storage.com') > -1) {
+        return removeFromBlob(filePath);
+    }
+
     if (filePath.indexOf('/uploads/videos/') !== 0) return false;
 
     const name = path.basename(filePath);
@@ -146,4 +238,6 @@ module.exports = {
     remove,
     providerOf,
     embedUrl,
+    usesBlob,
+    canWriteToDisk,
 };

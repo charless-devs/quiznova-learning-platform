@@ -19,6 +19,24 @@
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none"></div>
 
+    <!-- The database is not there - the login can not work -->
+    <% if (typeof dbDown !== 'undefined' && dbDown) { %>
+        <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl p-4 rounded-2xl bg-rose-500/10 border border-rose-500/40 backdrop-blur-md shadow-xl">
+            <div class="flex items-start gap-3">
+                <i data-lucide="database-zap" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+                <div class="min-w-0">
+                    <p class="text-sm font-bold text-rose-200">The database is not reachable</p>
+                    <p class="text-xs text-rose-300/80 mt-1 leading-relaxed">
+                        The sign in needs the database. Check the variables <code class="text-rose-200">DB_HOST</code>,
+                        <code class="text-rose-200">DB_PORT</code>, <code class="text-rose-200">DB_USER</code>,
+                        <code class="text-rose-200">DB_PASSWORD</code> and <code class="text-rose-200">DB_NAME</code>
+                        - on Vercel they belong to the environment of the project.
+                    </p>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
     <!-- MAIN SPLIT CARD CONTAINER -->
     <main class="w-full max-w-5xl bg-panelBg border border-borderBg/80 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px] relative z-10 my-auto">
 

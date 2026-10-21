@@ -1,0 +1,14 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "functions": {
+        "app.js": {
+            "memory": 1024,
+            "maxDuration": 60
+        }
+    },
+    "build": {
+        "env": {
+            "NODE_ENV": "production"
+        }
+    }
+}

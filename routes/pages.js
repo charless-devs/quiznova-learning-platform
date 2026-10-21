@@ -276,7 +276,14 @@ router.get('/accsetup', (req, res) => {
     if (req.user) {
         return res.redirect(landingFor(req.user, req.query.next));
     }
-    res.render('register_login', { user: null, next: req.query.next || '', subjects: subjects.SUBJECTS });
+
+    res.render('register_login', {
+        user: null,
+        next: req.query.next || '',
+        subjects: subjects.SUBJECTS,
+        // The login only works when the database is there.
+        dbDown: !db.isAvailable(),
+    });
 });
 
 router.get('/dashboard', async (req, res) => {

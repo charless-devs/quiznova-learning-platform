@@ -1028,9 +1028,13 @@ router.delete('/admin/courses/:id', requireAdmin, async (req, res) => {
         }
 
         const videos = await db.query('SELECT file_path FROM course_videos WHERE course_id = ?', [id]);
-        videos.forEach(function (video) {
-            uploads.remove(video.file_path);
-        });
+        await Promise.all(
+            videos.map(function (video) {
+                return uploads.remove(video.file_path).catch(function () {
+                    /* the file is gone either way */
+                });
+            })
+        );
 
         await db.execute('DELETE FROM courses WHERE id = ?', [id]);
 
@@ -1136,7 +1140,7 @@ router.post(
                 return res.status(404).json({ ok: false, error: 'That course does not exist.' });
             }
 
-            const stored = uploads.save(id, fileName, req.body);
+            const stored = await uploads.save(id, fileName, req.body, req.headers['content-type'] || 'video/mp4');
             const position = await nextPosition(db, id);
 
             const result = await db.execute(
@@ -1214,7 +1218,9 @@ router.delete('/admin/videos/:id', requireAdmin, async (req, res) => {
             return res.status(404).json({ ok: false, error: 'That video does not exist.' });
         }
 
-        uploads.remove(video.file_path);
+        uploads.remove(video.file_path).catch(function () {
+            /* the file is gone either way */
+        });
         await db.execute('DELETE FROM course_videos WHERE id = ?', [id]);
 
         return res.json({ ok: true, deleted: video.title });
@@ -1282,6 +1288,12 @@ router.post('/admin/settings', requireAdmin, async (req, res) => {
  *   GET /api/events?events=message:new,message:reply,presence,stats:updated
  */
 router.get('/events', requireAuth, (req, res) => {
+    // A serverless function (Vercel) cannot hold a connection open - the
+    // realtime stream is not available there, everything else works.
+    if (process.env.VERCEL) {
+        return res.status(204).end();
+    }
+
     realtime.subscribe(req, res, req.user);
 });
 

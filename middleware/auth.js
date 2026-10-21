@@ -41,6 +41,14 @@ const ROLE_CACHE_MS = 2000;
 const roleCache = new Map();
 
 if (!process.env.SESSION_SECRET) {
+    if (process.env.NODE_ENV === 'production') {
+        // A known secret would let anybody forge a session - better to stop.
+        throw new Error(
+            'SESSION_SECRET must be set in production. Generate one with: ' +
+                'node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"'
+        );
+    }
+
     console.warn('[auth] SESSION_SECRET not set - using the insecure development default.');
 }
 

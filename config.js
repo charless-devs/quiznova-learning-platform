@@ -51,7 +51,9 @@ const config = {
         user: process.env.DB_USER || 'root',
         password: process.env.DB_PASSWORD || '',
         database: process.env.DB_NAME || 'quiznova',
-        poolSize: Number(process.env.DB_POOL_SIZE) || 10,
+        // A serverless app opens a few connections per instance - a small
+        // pool keeps the database happy.
+        poolSize: Number(process.env.DB_POOL_SIZE) || 5,
     },
 
     sessionSecret: process.env.SESSION_SECRET || 'quiznova-dev-secret-change-me',

@@ -36,10 +36,15 @@ const FRIENDLY_ERRORS = {
     ER_BAD_DB_ERROR: 'Database "' + db.database + '" does not exist. Run "npm run db:setup" to create it.',
     ER_NOT_SUPPORTED_AUTH_MODE:
         'MySQL refused the login method. Use a user with mysql_native_password or caching_sha2_password.',
-    ECONNREFUSED: 'Cannot reach MySQL on ' + db.host + ':' + db.port + '. Is the MySQL service running?',
-    ETIMEDOUT: 'MySQL connection timed out.',
-    ENOTFOUND: 'MySQL host "' + db.host + '" could not be found.',
+    ECONNREFUSED:
+        'The database is not reachable on ' + db.host + ':' + db.port + '. Is the MySQL service running? ' +
+        'On Vercel: set DB_HOST, DB_PORT, DB_USER, DB_PASSWORD and DB_NAME in the project settings.',
+    ETIMEDOUT:
+        'The database did not answer. Check DB_HOST and the firewall of the database server.',
+    ENOTFOUND: 'The database server "' + db.host + '" was not found. Check DB_HOST.',
     PROTOCOL_CONNECTION_LOST: 'Lost connection to MySQL.',
+    PRODUCTION_CONNECTION_LIMIT_EXCEEDED:
+        'The database has too many connections. Lower DB_POOL_SIZE (2 - 5 is enough for a serverless app).',
 };
 
 function friendlyError(err) {
