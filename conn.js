@@ -48,6 +48,8 @@ const pool = mysql.createPool({
     waitForConnections: true,
     connectionLimit: db.poolSize,
     queueLimit: 0,
+    // A database that does not answer must not hang the page.
+    connectTimeout: Number(process.env.DB_CONNECT_TIMEOUT) || 10000,
     charset: 'utf8mb4',
     timezone: 'Z',
     supportBigNumbers: true,

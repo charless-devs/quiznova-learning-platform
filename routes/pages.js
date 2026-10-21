@@ -277,13 +277,26 @@ router.get('/accsetup', (req, res) => {
         return res.redirect(landingFor(req.user, req.query.next));
     }
 
-    res.render('register_login', {
-        user: null,
-        next: req.query.next || '',
-        subjects: subjects.SUBJECTS,
-        // The login only works when the database is there.
-        dbDown: !db.isAvailable(),
-    });
+    // The login only works when the database is there. The check waits for the
+    // answer - otherwise a cold start would show the notice even though the
+    // database is fine.
+    db.ping()
+        .then(function (ready) {
+            res.render('register_login', {
+                user: null,
+                next: req.query.next || '',
+                subjects: subjects.SUBJECTS,
+                dbDown: !ready,
+            });
+        })
+        .catch(function () {
+            res.render('register_login', {
+                user: null,
+                next: req.query.next || '',
+                subjects: subjects.SUBJECTS,
+                dbDown: true,
+            });
+        });
 });
 
 router.get('/dashboard', async (req, res) => {
