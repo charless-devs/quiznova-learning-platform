@@ -30,16 +30,32 @@ The app speaks MySQL/MariaDB. A free managed MySQL works:
 1. Create an account, then **Create service → MySQL** (the free plan is
    enough).
 2. Open the service → **Connection** → copy the values:
-   * **Host** → `DB_HOST`
-   * **Port** → `DB_PORT` (usually `3306`)
-   * **User** → `DB_USER`
+   * **Host** → `DB_HOST` (it looks like `mysql-xxxxx-you-123.f.aivencloud.com`)
+   * **Port** → `DB_PORT` (not always 3306 - take the one from the panel)
+   * **User** → `DB_USER` (`avnadmin`)
    * **Password** → `DB_PASSWORD`
-   * **Database** → `DB_NAME` (the `defaultdb` or the name you chose)
+   * **Database** → `DB_NAME` (`defaultdb`)
 3. Keep the values - you need them in the next step.
+
+> **The service needs a minute to be ready.** Right after the creation the
+> hostname does not resolve yet (`ENOTFOUND`) - that is normal, wait a
+> moment and check again.
 
 > Vercel can not reach `localhost` - the database has to be **publicly
 > reachable** (the free plans of Aiven and PlanetScale are). Add the host of
 > Vercel to the allow-list of the database if the provider asks for it.
+
+### The encrypted connection
+
+Aiven asks for SSL. The app can do that:
+
+| Variable | Value | What it does |
+|---|---|---|
+| `DB_SSL` | `1` | the connection is encrypted |
+| `DB_SSL_CA` | the path of the CA file | the certificate of the provider is checked (without it the connection is encrypted but the certificate is not verified) |
+
+The CA certificate of Aiven is in the panel of the service (**CA certificate →
+Show**). Save it as `db/aiven-ca.pem` and set `DB_SSL_CA=db/aiven-ca.pem`.
 
 ## 2. The environment variables of the project
 
@@ -48,11 +64,12 @@ In Vercel: **your project → Settings → Environment Variables**.
 | Variable | Value | Type |
 |---|---|---|
 | `DB_HOST` | the host of the database | plain |
-| `DB_PORT` | `3306` | plain |
+| `DB_PORT` | the port of the database (Aiven uses a random one) | plain |
 | `DB_USER` | the user of the database | plain |
 | `DB_PASSWORD` | the password of the database | **encrypted** |
 | `DB_NAME` | the name of the database | plain |
 | `DB_POOL_SIZE` | `3` (a serverless app opens few connections) | plain |
+| `DB_SSL` | `1` (the connection is encrypted) | plain |
 | `SESSION_SECRET` | a long random string | **encrypted** |
 | `BLOB_READ_WRITE_TOKEN` | only if you want to upload video files | **encrypted** |
 
