@@ -55,7 +55,11 @@ Aiven asks for SSL. The app can do that:
 | `DB_SSL_CA` | the path of the CA file | the certificate of the provider is checked (without it the connection is encrypted but the certificate is not verified) |
 
 The CA certificate of Aiven is in the panel of the service (**CA certificate →
-Show**). Save it as `db/aiven-ca.pem` and set `DB_SSL_CA=db/aiven-ca.pem`.
+Show**) - **right below the Service URI of the very same service**. Every
+service has its own CA, so a certificate of another service does not work
+(the connection then fails with *"certificate signature failure"*).
+
+Save it as `db/aiven-ca.pem` and set `DB_SSL_CA=db/aiven-ca.pem`.
 
 ## 2. The environment variables of the project
 
