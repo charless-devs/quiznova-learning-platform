@@ -10,8 +10,34 @@
  */
 
 const mysql = require('mysql2/promise');
+const fs = require('fs');
 
 const { db } = require('./config');
+
+/**
+ * The encrypted connection of a hosted database.
+ *
+ * DB_SSL=1 turns the encryption on. When DB_SSL_CA points to the
+ * certificate of the provider the certificate is checked, otherwise the
+ * connection is encrypted but the certificate is not verified.
+ */
+function buildSsl() {
+    const wanted = String(db.ssl || '').toLowerCase();
+    if (wanted !== '1' && wanted !== 'true' && wanted !== 'required') return undefined;
+
+    if (db.sslCa) {
+        try {
+            return {
+                ca: fs.readFileSync(db.sslCa, 'utf8'),
+                rejectUnauthorized: true,
+            };
+        } catch (err) {
+            console.warn('[db] the certificate ' + db.sslCa + ' could not be read:', err.message);
+        }
+    }
+
+    return { rejectUnauthorized: false };
+}
 
 const pool = mysql.createPool({
     host: db.host,
@@ -25,6 +51,7 @@ const pool = mysql.createPool({
     charset: 'utf8mb4',
     timezone: 'Z',
     supportBigNumbers: true,
+    ssl: buildSsl(),
 });
 
 /** Last known database state (refreshed by ping()). */

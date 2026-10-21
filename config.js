@@ -54,6 +54,11 @@ const config = {
         // A serverless app opens a few connections per instance - a small
         // pool keeps the database happy.
         poolSize: Number(process.env.DB_POOL_SIZE) || 5,
+        // A hosted database (Aiven, PlanetScale, ...) wants an encrypted
+        // connection: DB_SSL=1 turns it on, DB_SSL_CA points to the
+        // certificate of the provider.
+        ssl: process.env.DB_SSL || '',
+        sslCa: process.env.DB_SSL_CA || '',
     },
 
     sessionSecret: process.env.SESSION_SECRET || 'quiznova-dev-secret-change-me',
